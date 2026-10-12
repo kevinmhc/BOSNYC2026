@@ -178,9 +178,14 @@
         <i data-lucide="calendar" class="w-5 h-5"></i>
         <span class="text-[10px] font-medium">每日行程</span>
       </button>
+
+      <button onclick="switchView('standby')" id="navStandby" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
+        <i data-lucide="plane-landing" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">候補機位</span>
+      </button>
       
       <button onclick="switchView('hotels')" id="navHotels" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
-        <i data-lucide="hotel" class="w-5 h-5"></i>
+        <i data-lucide="bed" class="w-5 h-5"></i>
         <span class="text-[10px] font-medium">酒店住宿</span>
       </button>
 
@@ -195,6 +200,60 @@
       </button>
     </div>
   </nav>
+
+  <!-- Modal View: Standby Flights Info -->
+  <div id="standbyModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
+    <div class="max-w-md mx-auto w-full space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="plane-takeoff" class="w-5 h-5 text-sky-400"></i>
+          <span>航班與候補機位 (Flight & Standby)</span>
+        </h2>
+        <button onclick="closeModal('standbyModal')" class="p-1 rounded-full bg-slate-800 text-slate-400">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Main Flight Details -->
+      <div class="space-y-3">
+        <div class="glass-card p-4 rounded-xl border-l-4 border-l-sky-500">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-sky-400">去程 Flight 1</span>
+            <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full font-semibold">10/16 (五)</span>
+          </div>
+          <p class="text-sm font-bold text-white">CX826 HKG → YYZ (多倫多)</p>
+          <p class="text-xs text-slate-400 mt-1">起飛時間：19:10 (HKG)</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border-l-4 border-l-purple-500">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-purple-400">候補/轉機段 Standby</span>
+            <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-semibold">10/17 (六)</span>
+          </div>
+          <p class="text-sm font-bold text-white">YYZ → BOS (波士頓)</p>
+          <p class="text-xs text-slate-400 mt-1">備註：抵達多倫多後準備候補/轉飛波士頓</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border-l-4 border-l-amber-500">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-amber-400">內陸候補 Standby</span>
+            <span class="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">10/24 (六)</span>
+          </div>
+          <p class="text-sm font-bold text-white">EWR (Newark) → BOS (波士頓)</p>
+          <p class="text-xs text-slate-400 mt-1">備註：紐華克前往波士頓 Logan 機場準備返港</p>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border-l-4 border-l-emerald-500">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-emerald-400">回程 Flight 2</span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">10/25 (日)</span>
+          </div>
+          <p class="text-sm font-bold text-white">CX811 BOS → HKG (香港)</p>
+          <p class="text-xs text-slate-400 mt-1">起飛時間：01:30 (BOS)</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal View: Hotels List -->
   <div id="hotelsModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
@@ -555,6 +614,7 @@
       closeModal('hotelsModal');
       closeModal('checklistModal');
       closeModal('shareModal');
+      closeModal('standbyModal');
 
       if (view === 'hotels') {
         document.getElementById('hotelsModal').classList.remove('hidden');
@@ -562,18 +622,9 @@
       } else if (view === 'checklist') {
         document.getElementById('checklistModal').classList.remove('hidden');
         document.getElementById('checklistModal').classList.add('flex');
+      } else if (view === 'standby') {
+        document.getElementById('standbyModal').classList.remove('hidden');
+        document.getElementById('standbyModal').classList.add('flex');
       }
     }
-
-    function openShareModal() {
-      document.getElementById('shareModal').classList.remove('hidden');
-      document.getElementById('shareModal').classList.add('flex');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-      document.getElementById(id).classList.remove('flex');
-    }
-  </script>
-</body>
-</html>
+<!-- ... existing code -->
