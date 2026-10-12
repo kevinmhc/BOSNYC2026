@@ -172,8 +172,8 @@
 
   </main>
 
-  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-6 py-2">
-    <div class="max-w-md mx-auto flex items-center justify-between">
+  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-8 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
       <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
         <i data-lucide="calendar" class="w-5 h-5"></i>
         <span class="text-[10px] font-medium">每日行程</span>
@@ -192,11 +192,6 @@
       <button onclick="switchView('checklist')" id="navChecklist" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200 relative">
         <i data-lucide="check-square" class="w-5 h-5"></i>
         <span class="text-[10px] font-medium">出發備忘</span>
-      </button>
-
-      <button onclick="openShareModal()" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
-        <i data-lucide="smartphone" class="w-5 h-5"></i>
-        <span class="text-[10px] font-medium">加至主畫面</span>
       </button>
     </div>
   </nav>
@@ -291,25 +286,6 @@
     </div>
   </div>
 
-  <!-- Modal View: iPhone PWA Installation Guide -->
-  <div id="shareModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 justify-center items-center">
-    <div class="glass-card max-w-sm w-full p-5 rounded-2xl space-y-4 text-center">
-      <div class="w-12 h-12 rounded-full bg-sky-500/20 text-sky-400 mx-auto flex items-center justify-center">
-        <i data-lucide="smartphone" class="w-6 h-6"></i>
-      </div>
-      <h3 class="text-base font-bold text-white">安裝到 iPhone 主畫面</h3>
-      <p class="text-xs text-slate-300 leading-relaxed text-left">
-        1. 在 Safari 開啟此頁面或 GitHub Pages。<br>
-        2. 點擊畫面底部中央的 <strong>「分享 (Share)」</strong> 圖示。<br>
-        3. 向下捲動並選擇 <strong>「加至主畫面」(Add to Home Screen)</strong>。<br>
-        4. 打開主畫面圖示，即可像 App 一樣全螢幕流暢使用！
-      </p>
-      <button onclick="closeModal('shareModal')" class="w-full py-2.5 bg-sky-600 text-white font-bold rounded-xl text-xs active:scale-95 transition">
-        明白
-      </button>
-    </div>
-  </div>
-
   <script>
     /* Complete Updated Itinerary Data (10/16 - 10/25) */
     const tripData = [
@@ -338,7 +314,7 @@
           { time: "16:30", tag: "shopping", name: "Newbury St 行街散步", desc: "漫步 Boston 最具特色購物大道", location: "Newbury St, Boston, MA" },
           { time: "17:30", tag: "shopping", name: "Apple Boylston Street", desc: "旗艦店買新電話 / 3C 配件", location: "815 Boylston St, Boston, MA" },
           { time: "18:00", tag: "spot", name: "View Boston (Prudential)", desc: "登頂觀景台欣賞 Boston 秋日日落", location: "800 Boylston St, Boston, MA" },
-          { time: "19:30", tag: "food", name: "Dinner @ Geppetto", desc: " Cambridge 人氣意菜 (需 Resy 預約)", location: "100 N First St, Cambridge, MA" }
+          { time: "19:30", tag: "food", name: "Dinner @ Geppetto", desc: "Cambridge 人氣意菜 (需 Resy 預約)", location: "100 N First St, Cambridge, MA" }
         ]
       },
       {
@@ -610,21 +586,43 @@
       lucide.createIcons();
     }
 
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
     function switchView(view) {
       closeModal('hotelsModal');
       closeModal('checklistModal');
-      closeModal('shareModal');
       closeModal('standbyModal');
+
+      // Update Nav Bar Active Colors
+      ['navTimeline', 'navStandby', 'navHotels', 'navChecklist'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.className = "flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200";
+        }
+      });
 
       if (view === 'hotels') {
         document.getElementById('hotelsModal').classList.remove('hidden');
         document.getElementById('hotelsModal').classList.add('flex');
+        document.getElementById('navHotels').className = "flex flex-col items-center space-y-1 text-sky-400";
       } else if (view === 'checklist') {
         document.getElementById('checklistModal').classList.remove('hidden');
         document.getElementById('checklistModal').classList.add('flex');
+        document.getElementById('navChecklist').className = "flex flex-col items-center space-y-1 text-sky-400";
       } else if (view === 'standby') {
         document.getElementById('standbyModal').classList.remove('hidden');
         document.getElementById('standbyModal').classList.add('flex');
+        document.getElementById('navStandby').className = "flex flex-col items-center space-y-1 text-sky-400";
+      } else {
+        document.getElementById('navTimeline').className = "flex flex-col items-center space-y-1 text-sky-400";
       }
     }
-<!-- ... existing code -->
+  </script>
+</body>
+</html>
