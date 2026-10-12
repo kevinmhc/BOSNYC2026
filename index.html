@@ -196,56 +196,34 @@
     </div>
   </nav>
 
-  <!-- Modal View: Standby Flights Info -->
-  <div id="standbyModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
-    <div class="max-w-md mx-auto w-full space-y-4">
+  <!-- Dynamic Modal View: Standby Flights Info & Dynamic Editing -->
+  <div id="standbyModal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
+    <div class="max-w-md mx-auto w-full space-y-4 pb-12">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+        <div class="flex items-center gap-2">
           <i data-lucide="plane-takeoff" class="w-5 h-5 text-sky-400"></i>
-          <span>航班與候補機位 (Flight & Standby)</span>
-        </h2>
-        <button onclick="closeModal('standbyModal')" class="p-1 rounded-full bg-slate-800 text-slate-400">
+          <div>
+            <h2 class="text-base font-bold text-white">候補機位管理 (Standby Sectors)</h2>
+            <p class="text-[10px] text-slate-400">自訂及篩選內陸候補航線與航班</p>
+          </div>
+        </div>
+        <button onclick="closeModal('standbyModal')" class="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <!-- Main Flight Details -->
-      <div class="space-y-3">
-        <div class="glass-card p-4 rounded-xl border-l-4 border-l-sky-500">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-sky-400">去程 Flight 1</span>
-            <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full font-semibold">10/16 (五)</span>
-          </div>
-          <p class="text-sm font-bold text-white">CX826 HKG → YYZ (多倫多)</p>
-          <p class="text-xs text-slate-400 mt-1">起飛時間：19:10 (HKG)</p>
-        </div>
+      <!-- Add New Sector Button Header -->
+      <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+        <span class="text-xs font-semibold text-slate-300">航線 Sector 列表</span>
+        <button onclick="promptAddSector()" class="px-2.5 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-bold flex items-center gap-1 active:scale-95 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>新增 Sector</span>
+        </button>
+      </div>
 
-        <div class="glass-card p-4 rounded-xl border-l-4 border-l-purple-500">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-purple-400">候補/轉機段 Standby</span>
-            <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-semibold">10/17 (六)</span>
-          </div>
-          <p class="text-sm font-bold text-white">YYZ → BOS (波士頓)</p>
-          <p class="text-xs text-slate-400 mt-1">備註：抵達多倫多後準備候補/轉飛波士頓</p>
-        </div>
-
-        <div class="glass-card p-4 rounded-xl border-l-4 border-l-amber-500">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-amber-400">內陸候補 Standby</span>
-            <span class="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">10/24 (六)</span>
-          </div>
-          <p class="text-sm font-bold text-white">EWR (Newark) → BOS (波士頓)</p>
-          <p class="text-xs text-slate-400 mt-1">備註：紐華克前往波士頓 Logan 機場準備返港</p>
-        </div>
-
-        <div class="glass-card p-4 rounded-xl border-l-4 border-l-emerald-500">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-xs font-bold text-emerald-400">回程 Flight 2</span>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">10/25 (日)</span>
-          </div>
-          <p class="text-sm font-bold text-white">CX811 BOS → HKG (香港)</p>
-          <p class="text-xs text-slate-400 mt-1">起飛時間：01:30 (BOS)</p>
-        </div>
+      <!-- Sector Tabs / Container -->
+      <div id="standbySectorsContainer" class="space-y-4">
+        <!-- Injected Dynamically via JS -->
       </div>
     </div>
   </div>
@@ -435,6 +413,235 @@
       { id: "c7", text: "信用卡 (外幣簽帳/Apple Pay 設定)", checked: true }
     ];
 
+    /* Dynamic Standby Sectors & Flights Data Structure */
+    let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
+      {
+        id: "sec-1",
+        title: "YYZ - BOS (多倫多 → 波士頓)",
+        isNyc: false,
+        nycFilter: "ALL",
+        flights: [
+          { id: "f1", airline: "Air Canada", flightNo: "AC8800", depTime: "11:15", terminal: "T1", checkinTime: "09:30", apt: "YYZ" },
+          { id: "f2", airline: "Air Canada", flightNo: "AC8804", depTime: "16:20", terminal: "T1", checkinTime: "14:30", apt: "YYZ" }
+        ]
+      },
+      {
+        id: "sec-2",
+        title: "BOS - NYC (波士頓 → 紐約區)",
+        isNyc: true,
+        nycFilter: "ALL",
+        flights: [
+          { id: "f3", airline: "Delta Air Lines", flightNo: "DL2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "07:15", apt: "LGA" },
+          { id: "f4", airline: "American Airlines", flightNo: "AA2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:45", apt: "EWR" },
+          { id: "f5", airline: "JetBlue", flightNo: "B6481", depTime: "17:45", terminal: "Terminal C", checkinTime: "16:15", apt: "JFK" }
+        ]
+      },
+      {
+        id: "sec-3",
+        title: "NYC - BOS (紐約區 → 波士頓)",
+        isNyc: true,
+        nycFilter: "ALL",
+        flights: [
+          { id: "f6", airline: "United Airlines", flightNo: "UA3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "08:00", apt: "EWR" },
+          { id: "f7", airline: "Delta Air Lines", flightNo: "DL2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "13:00", apt: "LGA" },
+          { id: "f8", airline: "American Airlines", flightNo: "AA1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:30", apt: "JFK" }
+        ]
+      }
+    ];
+
+    function saveStandbyData() {
+      localStorage.setItem('us_trip_standby_data', JSON.stringify(standbyData));
+      renderStandbyView();
+    }
+
+    function renderStandbyView() {
+      const container = document.getElementById('standbySectorsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      standbyData.forEach((sec, secIdx) => {
+        const secCard = document.createElement('div');
+        secCard.className = "glass-card rounded-2xl p-4 border border-slate-800 space-y-3";
+
+        // Filter flights if NYC sector
+        let displayedFlights = sec.flights;
+        if (sec.isNyc && sec.nycFilter !== "ALL") {
+          displayedFlights = sec.flights.filter(f => f.apt === sec.nycFilter);
+        }
+
+        secCard.innerHTML = `
+          <!-- Sector Title & Operations -->
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+            <h3 class="text-sm font-extrabold text-sky-400 flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+              <span>${sec.title}</span>
+            </h3>
+            <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1 rounded-lg text-xs flex items-center gap-0.5">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- NYC Airport Filter Bar (Only if NYC) -->
+          ${sec.isNyc ? `
+            <div class="flex items-center gap-1.5 pt-1">
+              <span class="text-[10px] font-bold text-slate-400 shrink-0">機場 Filter:</span>
+              <div class="flex gap-1 overflow-x-auto hide-scrollbar">
+                ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
+                  <button onclick="setNycFilter('${sec.id}', '${apt}')" 
+                    class="px-2.5 py-0.5 rounded-full text-[10px] font-bold transition ${
+                      sec.nycFilter === apt 
+                        ? 'bg-sky-500 text-white pulse-glow' 
+                        : 'bg-slate-800/80 text-slate-400 hover:bg-slate-700'
+                    }">
+                    ${apt}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Flights List -->
+          <div class="space-y-2 pt-1">
+            ${displayedFlights.length === 0 ? `
+              <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+                暫無符合條件的候補航班
+              </div>
+            ` : displayedFlights.map(f => `
+              <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-extrabold text-white">${f.airline}</span>
+                      <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded border border-sky-500/20">${f.flightNo}</span>
+                      ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button onclick="editFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
+                      <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-rose-400">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
+                  <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime}</strong></div>
+                  <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal || '--'}</strong></div>
+                  <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Add Flight to Sector Button -->
+          <button onclick="promptAddFlight('${sec.id}')" class="w-full py-1.5 bg-slate-800/80 hover:bg-slate-800 text-sky-400 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
+          </button>
+        `;
+
+        container.appendChild(secCard);
+      });
+
+      lucide.createIcons();
+    }
+
+    function promptAddSector() {
+      const title = prompt("請輸入新 Sector 航線名稱 (例: BOS - PHL):");
+      if (!title) return;
+      const isNyc = title.toUpperCase().includes("NYC") || title.toUpperCase().includes("EWR") || title.toUpperCase().includes("LGA") || title.toUpperCase().includes("JFK");
+      
+      standbyData.push({
+        id: "sec-" + Date.now(),
+        title: title,
+        isNyc: isNyc,
+        nycFilter: "ALL",
+        flights: []
+      });
+      saveStandbyData();
+    }
+
+    function deleteSector(secId) {
+      if (confirm("確定要刪除整個 Sector 及其所有航班嗎？")) {
+        standbyData = standbyData.filter(s => s.id !== secId);
+        saveStandbyData();
+      }
+    }
+
+    function setNycFilter(secId, filter) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (sec) {
+        sec.nycFilter = filter;
+        renderStandbyView();
+      }
+    }
+
+    function promptAddFlight(secId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+
+      const airline = prompt("航空公司 (例: Delta Air Lines):", "Delta Air Lines");
+      if (!airline) return;
+      const flightNo = prompt("航班編號 (例: DL1234):", "DL");
+      const depTime = prompt("起飛時間 (例: 14:30):", "12:00");
+      const terminal = prompt("Terminal (例: Terminal B / T1):", "T1");
+      const checkinTime = prompt("報到 / Standby 時間 (例: 10:30):", "10:00");
+      
+      let apt = "ALL";
+      if (sec.isNyc) {
+        apt = (prompt("機場代碼 (EWR / LGA / JFK):", "EWR") || "EWR").toUpperCase();
+      }
+
+      sec.flights.push({
+        id: "f-" + Date.now(),
+        airline,
+        flightNo,
+        depTime,
+        terminal,
+        checkinTime,
+        apt
+      });
+
+      saveStandbyData();
+    }
+
+    function editFlight(secId, flightId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+      const flight = sec.flights.find(f => f.id === flightId);
+      if (!flight) return;
+
+      const airline = prompt("修改 航空公司:", flight.airline);
+      if (!airline) return;
+      const flightNo = prompt("修改 航班編號:", flight.flightNo);
+      const depTime = prompt("修改 起飛時間:", flight.depTime);
+      const terminal = prompt("修改 Terminal:", flight.terminal);
+      const checkinTime = prompt("修改 報到/Standby時間:", flight.checkinTime);
+      
+      let apt = flight.apt;
+      if (sec.isNyc) {
+        apt = (prompt("修改 機場代碼 (EWR / LGA / JFK):", flight.apt) || flight.apt).toUpperCase();
+      }
+
+      flight.airline = airline;
+      flight.flightNo = flightNo;
+      flight.depTime = depTime;
+      flight.terminal = terminal;
+      flight.checkinTime = checkinTime;
+      flight.apt = apt;
+
+      saveStandbyData();
+    }
+
+    function deleteFlight(secId, flightId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+      sec.flights = sec.flights.filter(f => f.id !== flightId);
+      saveStandbyData();
+    }
+
     let currentDayIndex = 0;
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -443,6 +650,7 @@
       renderDay(0);
       renderChecklist();
       renderHotelsModal();
+      renderStandbyView();
     });
 
     function renderTabs() {
@@ -619,6 +827,7 @@
         document.getElementById('standbyModal').classList.remove('hidden');
         document.getElementById('standbyModal').classList.add('flex');
         document.getElementById('navStandby').className = "flex flex-col items-center space-y-1 text-sky-400";
+        renderStandbyView();
       } else {
         document.getElementById('navTimeline').className = "flex flex-col items-center space-y-1 text-sky-400";
       }
