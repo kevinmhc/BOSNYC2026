@@ -85,16 +85,15 @@
       color: #64748b;
     }
 
-    /* 關鍵修復：強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode，並解決 iOS Safari 寬度溢出問題 */
+    /* 強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode */
     input[type="time"], input[type="date"], input[type="text"], select {
       color-scheme: dark;
-      font-size: 16px !important; /* 防止 iOS 點擊 input 時畫面強制 zoom-in */
+      font-size: 16px !important;
       box-sizing: border-box;
       max-width: 100%;
       width: 100%;
     }
 
-    /* 針對 iOS Safari 嚴格限制 time input 顯示避免 overflow */
     input[type="time"] {
       -webkit-appearance: none;
       appearance: none;
@@ -243,6 +242,7 @@
 
   </main>
 
+  <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-6 py-2">
     <div class="max-w-md mx-auto flex items-center justify-around">
       <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
@@ -335,7 +335,7 @@
   </div>
 
   <script>
-    /* Complete Updated Itinerary Data (10/16 - 10/25) */
+    /* Complete Itinerary Data (10/16 - 10/25) */
     const tripData = [
       {
         day: 1,
@@ -491,20 +491,6 @@
       { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
     ];
 
-    /* Helper function to convert YYYY-MM-DD or standard date string to formatted date (MM/DD (週日)) */
-    function formatDateWithWeekday(dateStr) {
-      if (!dateStr) return "";
-      if (dateStr.includes("(") && dateStr.includes(")")) return dateStr;
-      const parsed = new Date(dateStr);
-      if (isNaN(parsed.getTime())) return dateStr;
-      
-      const month = String(parsed.getMonth() + 1).padStart(2, '0');
-      const day = String(parsed.getDate()).padStart(2, '0');
-      const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-      const weekday = weekdays[parsed.getDay()];
-      return `${month}/${day} (${weekday})`;
-    }
-
     /* Helper function to calculate check-in time (2 hours before departure) */
     function calculateCheckinTime(depTimeStr) {
       if (!depTimeStr) return "";
@@ -550,7 +536,7 @@
       nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
     }
 
-    /* Dynamic Standby Sectors & Flights Data Structure */
+    /* Initial Standby Sectors & Flights Data Structure */
     let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
       {
         id: "sec-1",
@@ -634,6 +620,14 @@
       const sec = standbyData.find(s => s.id === secId);
       if (sec) {
         sec.nycFilter = apt;
+        renderStandbyView();
+      }
+    }
+
+    function setAirlineFilter(secId, code) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (sec) {
+        sec.airlineFilter = code;
         renderStandbyView();
       }
     }
@@ -766,7 +760,37 @@
       closeFlightForm();
     }
 
-        /* Apply Airline Filter */
+    function deleteFlight(secId, flightId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+      sec.flights = sec.flights.filter(f => f.id !== flightId);
+      saveStandbyData();
+    }
+
+    /* Render Standby View */
+    function renderStandbyView() {
+      const container = document.getElementById('standbySectorsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      standbyData.forEach((sec, idx) => {
+        const theme = sectorColorThemes[idx % sectorColorThemes.length];
+        const secCard = document.createElement('div');
+        secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} space-y-3 transition-all`;
+
+        // Extract distinct airline codes in this sector
+        const availableAirlines = Array.from(
+          new Set(sec.flights.map(f => (f.airlineCode || '').toUpperCase()).filter(Boolean))
+        ).sort();
+
+        let displayedFlights = [...sec.flights];
+
+        // Apply NYC Airport Filter
+        if (sec.isNyc && sec.nycFilter && sec.nycFilter !== "ALL") {
+          displayedFlights = displayedFlights.filter(f => f.apt === sec.nycFilter);
+        }
+
+        // Apply Airline Filter
         if (sec.airlineFilter && sec.airlineFilter !== "ALL") {
           displayedFlights = displayedFlights.filter(f => (f.airlineCode || '').toUpperCase() === sec.airlineFilter);
         }
@@ -902,22 +926,6 @@
       lucide.createIcons();
     }
 
-    /* Airline Filter Setter */
-    function setAirlineFilter(secId, code) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (sec) {
-        sec.airlineFilter = code;
-        renderStandbyView();
-      }
-    }
-
-    function deleteFlight(secId, flightId) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-      sec.flights = sec.flights.filter(f => f.id !== flightId);
-      saveStandbyData();
-    }
-
     let currentDayIndex = 0;
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -931,6 +939,7 @@
 
     function renderTabs() {
       const container = document.getElementById("dayTabsList");
+      if (!container) return;
       container.innerHTML = "";
       
       tripData.forEach((data, idx) => {
@@ -957,6 +966,7 @@
 
     function renderDay(index) {
       const data = tripData[index];
+      if (!data) return;
       
       document.getElementById("tripProgressText").innerText = `Day ${data.day} / 10`;
       document.getElementById("dayBadge").innerText = `DAY ${data.day} • ${data.date}`;
@@ -1021,6 +1031,7 @@
 
     function renderChecklist() {
       const container = document.getElementById("checklistContainer");
+      if (!container) return;
       container.innerHTML = "";
       
       checklistData.forEach(item => {
@@ -1041,6 +1052,7 @@
 
     function renderHotelsModal() {
       const container = document.getElementById("hotelModalList");
+      if (!container) return;
       container.innerHTML = "";
       
       const hotels = [
