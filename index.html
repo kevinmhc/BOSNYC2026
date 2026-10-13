@@ -303,7 +303,7 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="min-w-0 overflow-hidden">
             <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (Departure)</label>
-            <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
+            <input type="time" id="formDepTime" onchange="handleDepTimeChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
           <div class="min-w-0 overflow-hidden">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
@@ -312,7 +312,7 @@
         </div>
 
         <div class="min-w-0 overflow-hidden">
-          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間</label>
+          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間 (-2 hrs)</label>
           <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
         </div>
 
@@ -494,7 +494,7 @@
     /* Helper function to convert YYYY-MM-DD or standard date string to formatted date (MM/DD (週日)) */
     function formatDateWithWeekday(dateStr) {
       if (!dateStr) return "";
-      if (dateStr.includes("(") && dateStr.includes(")")) return dateStr; // Already formatted
+      if (dateStr.includes("(") && dateStr.includes(")")) return dateStr;
       const parsed = new Date(dateStr);
       if (isNaN(parsed.getTime())) return dateStr;
       
@@ -503,6 +503,32 @@
       const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
       const weekday = weekdays[parsed.getDay()];
       return `${month}/${day} (${weekday})`;
+    }
+
+    /* Helper function to calculate check-in time (2 hours before departure) */
+    function calculateCheckinTime(depTimeStr) {
+      if (!depTimeStr) return "";
+      const parts = depTimeStr.split(":");
+      if (parts.length !== 2) return "";
+      let hours = parseInt(parts[0], 10);
+      let minutes = parseInt(parts[1], 10);
+      if (isNaN(hours) || isNaN(minutes)) return "";
+      
+      hours = hours - 2;
+      if (hours < 0) hours += 24;
+      
+      return String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0');
+    }
+
+    function handleDepTimeChange() {
+      const depTime = document.getElementById('formDepTime').value;
+      const checkinInput = document.getElementById('formCheckinTime');
+      if (depTime) {
+        const calculated = calculateCheckinTime(depTime);
+        if (calculated) {
+          checkinInput.value = calculated;
+        }
+      }
     }
 
     /* Airline Code Mapping */
@@ -534,8 +560,8 @@
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "11:15", terminal: "T1", checkinTime: "09:30", apt: "YYZ" },
-          { id: "f2", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:30", apt: "YYZ" }
+          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "11:15", terminal: "T1", checkinTime: "09:15", apt: "YYZ" },
+          { id: "f2", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:20", apt: "YYZ" }
         ]
       },
       {
@@ -546,9 +572,9 @@
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f3", airlineCode: "DL", flightNo: "2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "07:15", apt: "LGA" },
-          { id: "f4", airlineCode: "AA", flightNo: "2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:45", apt: "EWR" },
-          { id: "f5", airlineCode: "B6", flightNo: "481", depTime: "17:45", terminal: "Terminal C", checkinTime: "16:15", apt: "JFK" }
+          { id: "f3", airlineCode: "DL", flightNo: "2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "06:30", apt: "LGA" },
+          { id: "f4", airlineCode: "AA", flightNo: "2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:00", apt: "EWR" },
+          { id: "f5", airlineCode: "B6", flightNo: "481", depTime: "17:45", terminal: "Terminal C", checkinTime: "15:45", apt: "JFK" }
         ]
       },
       {
@@ -559,9 +585,9 @@
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f6", airlineCode: "UA", flightNo: "3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "08:00", apt: "EWR" },
-          { id: "f7", airlineCode: "DL", flightNo: "2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "13:00", apt: "LGA" },
-          { id: "f8", airlineCode: "AA", flightNo: "1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:30", apt: "JFK" }
+          { id: "f6", airlineCode: "UA", flightNo: "3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "07:15", apt: "EWR" },
+          { id: "f7", airlineCode: "DL", flightNo: "2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "12:20", apt: "LGA" },
+          { id: "f8", airlineCode: "AA", flightNo: "1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:00", apt: "JFK" }
         ]
       }
     ];
@@ -589,7 +615,6 @@
         const secCard = document.createElement('div');
         secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} transition-all`;
 
-        // Filter flights if NYC sector
         let displayedFlights = sec.flights;
         if (sec.isNyc && sec.nycFilter !== "ALL") {
           displayedFlights = sec.flights.filter(f => f.apt === sec.nycFilter);
@@ -598,7 +623,6 @@
         const isExpanded = sec.isExpanded ?? false;
 
         secCard.innerHTML = `
-          <!-- Sector Title Bar (Clickable Accordion Header) -->
           <div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleSectorExpand('${sec.id}')">
             <div class="flex items-center gap-2 flex-wrap">
               <i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4 ${theme.text} transition-transform"></i>
@@ -622,10 +646,8 @@
             </div>
           </div>
 
-          <!-- Collapsible Body Content -->
           ${isExpanded ? `
             <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-3">
-              <!-- NYC Airport Filter Bar (Only if NYC) -->
               ${sec.isNyc ? `
                 <div class="flex items-center gap-1.5">
                   <span class="text-[10px] font-bold text-slate-400 shrink-0">機場 Filter:</span>
@@ -644,7 +666,6 @@
                 </div>
               ` : ''}
 
-              <!-- Flights List -->
               <div class="space-y-2">
                 ${displayedFlights.length === 0 ? `
                   <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
@@ -685,7 +706,6 @@
                 }).join('')}
               </div>
 
-              <!-- Add Flight to Sector Button -->
               <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-1.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                 <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
@@ -733,6 +753,9 @@
         document.getElementById('formSecId').value = secId;
         document.getElementById('formFlightId').value = '';
         document.getElementById('formAirlineName').value = '';
+        // 預設起飛時間 09:00，報到時間自動設為 07:00 (前 2 小時)
+        document.getElementById('formDepTime').value = '09:00';
+        document.getElementById('formCheckinTime').value = '07:00';
       }
 
       document.getElementById('flightFormModal').classList.remove('hidden');
@@ -917,7 +940,6 @@
       document.getElementById("hotelText").innerText = data.hotel;
       document.getElementById("hotelMapBtn").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.hotelAddr)}`;
 
-      // Banner Highlight Toggle
       const banner = document.getElementById("highlightBanner");
       if (data.highlight) {
         banner.classList.remove("hidden");
@@ -925,7 +947,6 @@
         banner.classList.add("hidden");
       }
 
-      // Render Timeline
       const timeline = document.getElementById("timelineContainer");
       timeline.innerHTML = "";
 
