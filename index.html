@@ -200,7 +200,7 @@
       <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <div>
           <h2 class="text-sm font-bold text-white">候補航線管理</h2>
-          <p class="text-[10px] text-slate-400">各區專屬色彩動態篩選與航班清單</p>
+          <p class="text-[10px] text-slate-400">支援按機場 (NYC) 及航空公司 (AA / DL / UA / B6 等) 雙重篩選</p>
         </div>
         <button onclick="promptAddSector()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-95 transition shadow-lg shadow-sky-500/20">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -558,10 +558,14 @@
         date: "10/17 (六)",
         isNyc: false,
         nycFilter: "ALL",
-        isExpanded: false,
+        airlineFilter: "ALL",
+        isExpanded: true,
         flights: [
-          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "11:15", terminal: "T1", checkinTime: "09:15", apt: "YYZ" },
-          { id: "f2", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:20", apt: "YYZ" }
+          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "08:30", terminal: "T1", checkinTime: "06:30", apt: "YYZ" },
+          { id: "f2", airlineCode: "AC", flightNo: "8802", depTime: "11:15", terminal: "T1", checkinTime: "09:15", apt: "YYZ" },
+          { id: "f3", airlineCode: "PD", flightNo: "223", depTime: "13:45", terminal: "Billy Bishop (YTZ)", checkinTime: "11:45", apt: "YTZ" },
+          { id: "f4", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:20", apt: "YYZ" },
+          { id: "f5", airlineCode: "AC", flightNo: "8808", depTime: "20:00", terminal: "T1", checkinTime: "18:00", apt: "YYZ" }
         ]
       },
       {
@@ -570,11 +574,18 @@
         date: "10/19 (一)",
         isNyc: true,
         nycFilter: "ALL",
-        isExpanded: false,
+        airlineFilter: "ALL",
+        isExpanded: true,
         flights: [
-          { id: "f3", airlineCode: "DL", flightNo: "2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "06:30", apt: "LGA" },
-          { id: "f4", airlineCode: "AA", flightNo: "2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:00", apt: "EWR" },
-          { id: "f5", airlineCode: "B6", flightNo: "481", depTime: "17:45", terminal: "Terminal C", checkinTime: "15:45", apt: "JFK" }
+          { id: "f6", airlineCode: "DL", flightNo: "2145", depTime: "06:00", terminal: "Terminal A", checkinTime: "04:00", apt: "LGA" },
+          { id: "f7", airlineCode: "AA", flightNo: "2121", depTime: "07:15", terminal: "Terminal B", checkinTime: "05:15", apt: "LGA" },
+          { id: "f8", airlineCode: "UA", flightNo: "1820", depTime: "08:30", terminal: "Terminal B", checkinTime: "06:30", apt: "EWR" },
+          { id: "f9", airlineCode: "B6", flightNo: "481", depTime: "10:00", terminal: "Terminal C", checkinTime: "08:00", apt: "JFK" },
+          { id: "f10", airlineCode: "DL", flightNo: "2310", depTime: "11:30", terminal: "Terminal A", checkinTime: "09:30", apt: "LGA" },
+          { id: "f11", airlineCode: "AA", flightNo: "2354", depTime: "13:45", terminal: "Terminal B", checkinTime: "11:45", apt: "JFK" },
+          { id: "f12", airlineCode: "UA", flightNo: "3502", depTime: "16:15", terminal: "Terminal B", checkinTime: "14:15", apt: "EWR" },
+          { id: "f13", airlineCode: "B6", flightNo: "1280", depTime: "18:30", terminal: "Terminal C", checkinTime: "16:30", apt: "JFK" },
+          { id: "f14", airlineCode: "DL", flightNo: "2780", depTime: "20:15", terminal: "Terminal A", checkinTime: "18:15", apt: "LGA" }
         ]
       },
       {
@@ -583,27 +594,21 @@
         date: "10/24 (六)",
         isNyc: true,
         nycFilter: "ALL",
-        isExpanded: false,
+        airlineFilter: "ALL",
+        isExpanded: true,
         flights: [
-          { id: "f6", airlineCode: "UA", flightNo: "3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "07:15", apt: "EWR" },
-          { id: "f7", airlineCode: "DL", flightNo: "2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "12:20", apt: "LGA" },
-          { id: "f8", airlineCode: "AA", flightNo: "1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:00", apt: "JFK" }
+          { id: "f15", airlineCode: "DL", flightNo: "2201", depTime: "07:00", terminal: "Terminal C", checkinTime: "05:00", apt: "LGA" },
+          { id: "f16", airlineCode: "UA", flightNo: "1104", depTime: "08:15", terminal: "Terminal C", checkinTime: "06:15", apt: "EWR" },
+          { id: "f17", airlineCode: "AA", flightNo: "1892", depTime: "09:30", terminal: "Terminal 8", checkinTime: "07:30", apt: "JFK" },
+          { id: "f18", airlineCode: "DL", flightNo: "2450", depTime: "11:45", terminal: "Terminal C", checkinTime: "09:45", apt: "LGA" },
+          { id: "f19", airlineCode: "B6", flightNo: "618", depTime: "13:30", terminal: "Terminal 5", checkinTime: "11:30", apt: "JFK" },
+          { id: "f20", airlineCode: "UA", flightNo: "2390", depTime: "15:00", terminal: "Terminal C", checkinTime: "13:00", apt: "EWR" },
+          { id: "f21", airlineCode: "AA", flightNo: "2014", depTime: "17:15", terminal: "Terminal B", checkinTime: "15:15", apt: "LGA" },
+          { id: "f22", airlineCode: "DL", flightNo: "2890", depTime: "19:00", terminal: "Terminal C", checkinTime: "17:00", apt: "LGA" },
+          { id: "f23", airlineCode: "UA", flightNo: "3810", depTime: "21:00", terminal: "Terminal C", checkinTime: "19:00", apt: "EWR" }
         ]
       }
     ];
-
-    function toggleSectorExpand(secId) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (sec) {
-        sec.isExpanded = !sec.isExpanded;
-        saveStandbyData();
-      }
-    }
-
-    function saveStandbyData() {
-      localStorage.setItem('us_trip_standby_data', JSON.stringify(standbyData));
-      renderStandbyView();
-    }
 
     function renderStandbyView() {
       const container = document.getElementById('standbySectorsContainer');
@@ -615,12 +620,22 @@
         const secCard = document.createElement('div');
         secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} transition-all`;
 
+        /* Collect unique airlines in this sector for the filter */
+        const availableAirlines = Array.from(new Set(sec.flights.map(f => (f.airlineCode || '').toUpperCase()).filter(Boolean)));
+
         let displayedFlights = sec.flights;
-        if (sec.isNyc && sec.nycFilter !== "ALL") {
-          displayedFlights = sec.flights.filter(f => f.apt === sec.nycFilter);
+
+        /* Apply NYC Airport Filter */
+        if (sec.isNyc && sec.nycFilter && sec.nycFilter !== "ALL") {
+          displayedFlights = displayedFlights.filter(f => f.apt === sec.nycFilter);
         }
 
-        const isExpanded = sec.isExpanded ?? false;
+        /* Apply Airline Filter */
+        if (sec.airlineFilter && sec.airlineFilter !== "ALL") {
+          displayedFlights = displayedFlights.filter(f => (f.airlineCode || '').toUpperCase() === sec.airlineFilter);
+        }
+
+        const isExpanded = sec.isExpanded ?? true;
 
         secCard.innerHTML = `
           <div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleSectorExpand('${sec.id}')">
@@ -632,7 +647,7 @@
               </h3>
               ${sec.date ? `<span class="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">${sec.date}</span>` : ''}
               <span class="text-[10px] font-bold ${theme.badgeBg} ${theme.text} px-2 py-0.5 rounded-full border ${theme.border}">
-                ${sec.flights.length} 班航班
+                ${displayedFlights.length} / ${sec.flights.length} 班航班
               </span>
             </div>
 
@@ -648,28 +663,59 @@
 
           ${isExpanded ? `
             <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-3">
-              ${sec.isNyc ? `
+              
+              <!-- Filter Controls Container -->
+              <div class="space-y-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                <!-- Airline Code Filter -->
                 <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-slate-400 shrink-0">機場 Filter:</span>
-                  <div class="flex gap-1 overflow-x-auto hide-scrollbar">
-                    ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
-                      <button onclick="setNycFilter('${sec.id}', '${apt}')" 
-                        class="px-2.5 py-0.5 rounded-full text-[10px] font-bold transition ${
-                          sec.nycFilter === apt 
+                  <span class="text-[10px] font-bold text-sky-400 shrink-0 w-16">Airline 篩選:</span>
+                  <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
+                    <button onclick="setAirlineFilter('${sec.id}', 'ALL')" 
+                      class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                        (!sec.airlineFilter || sec.airlineFilter === 'ALL') 
+                          ? `${theme.activeTab} pulse-glow` 
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }">
+                      ALL 全部
+                    </button>
+                    ${availableAirlines.map(code => `
+                      <button onclick="setAirlineFilter('${sec.id}', '${code}')" 
+                        class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                          sec.airlineFilter === code 
                             ? `${theme.activeTab} pulse-glow` 
-                            : 'bg-slate-800/80 text-slate-400 hover:bg-slate-700'
+                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                         }">
-                        ${apt}
+                        ${code}
                       </button>
                     `).join('')}
                   </div>
                 </div>
-              ` : ''}
 
+                <!-- NYC Airport Filter (If Applicable) -->
+                ${sec.isNyc ? `
+                  <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
+                    <span class="text-[10px] font-bold text-amber-400 shrink-0 w-16">機場 篩選:</span>
+                    <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
+                      ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
+                        <button onclick="setNycFilter('${sec.id}', '${apt}')" 
+                          class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                            (!sec.nycFilter || sec.nycFilter === apt) 
+                              ? 'bg-amber-500 text-slate-950 font-black pulse-glow' 
+                              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                          }">
+                          ${apt}
+                        </button>
+                      `).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- Flight List -->
               <div class="space-y-2">
                 ${displayedFlights.length === 0 ? `
-                  <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
-                    暫無符合條件的候補航班
+                  <div class="p-4 text-center text-xs text-slate-400 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+                    沒有符合目前條件的候補航班
                   </div>
                 ` : displayedFlights.map(f => {
                   const code = (f.airlineCode || '').toUpperCase();
@@ -680,13 +726,13 @@
                   <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
                     <div class="flex justify-between items-start">
                       <div>
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-wrap">
                           <span class="text-xs font-extrabold text-white">${airlineFullName}</span>
                           <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${fullFlightNo}</span>
                           ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
                         </div>
                       </div>
-                      <div class="flex items-center gap-1">
+                      <div class="flex items-center gap-1 shrink-0">
                         <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
                           <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                         </button>
@@ -706,7 +752,7 @@
                 }).join('')}
               </div>
 
-              <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-1.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+              <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-2 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
                 <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                 <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
               </button>
@@ -720,168 +766,11 @@
       lucide.createIcons();
     }
 
-    /* Single Form Modal Logic */
-    function openFlightForm(secId, flightId = null) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-
-      document.getElementById('formSecId').value = secId;
-      document.getElementById('formFlightId').value = flightId || '';
-
-      const nycGroup = document.getElementById('nycAirportSelectGroup');
-      if (sec.isNyc) {
-        nycGroup.classList.remove('hidden');
-      } else {
-        nycGroup.classList.add('hidden');
-      }
-
-      if (flightId) {
-        const flight = sec.flights.find(f => f.id === flightId);
-        if (flight) {
-          document.getElementById('flightFormTitle').innerText = '編輯航班資料';
-          document.getElementById('formAirlineCode').value = flight.airlineCode || '';
-          document.getElementById('formFlightNo').value = flight.flightNo || '';
-          document.getElementById('formDepTime').value = flight.depTime || '';
-          document.getElementById('formTerminal').value = flight.terminal || '';
-          document.getElementById('formCheckinTime').value = flight.checkinTime || '';
-          document.getElementById('formApt').value = flight.apt || 'EWR';
-          autoLookupAirline();
-        }
-      } else {
-        document.getElementById('flightFormTitle').innerText = '新增候補航班';
-        document.getElementById('flightForm').reset();
-        document.getElementById('formSecId').value = secId;
-        document.getElementById('formFlightId').value = '';
-        document.getElementById('formAirlineName').value = '';
-        // 預設起飛時間 09:00，報到時間自動設為 07:00 (前 2 小時)
-        document.getElementById('formDepTime').value = '09:00';
-        document.getElementById('formCheckinTime').value = '07:00';
-      }
-
-      document.getElementById('flightFormModal').classList.remove('hidden');
-      document.getElementById('flightFormModal').classList.add('flex');
-    }
-
-    function closeFlightForm() {
-      const modal = document.getElementById('flightFormModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function handleFlightFormSubmit(e) {
-      e.preventDefault();
-      const secId = document.getElementById('formSecId').value;
-      const flightId = document.getElementById('formFlightId').value;
-
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-
-      const code = document.getElementById('formAirlineCode').value.trim().toUpperCase();
-      const flightData = {
-        id: flightId || ("f-" + Date.now()),
-        airlineCode: code,
-        airline: airlineMapping[code] || "其他航空公司",
-        flightNo: document.getElementById('formFlightNo').value.trim(),
-        depTime: document.getElementById('formDepTime').value,
-        terminal: document.getElementById('formTerminal').value,
-        checkinTime: document.getElementById('formCheckinTime').value,
-        apt: sec.isNyc ? document.getElementById('formApt').value : 'ALL'
-      };
-
-      if (flightId) {
-        const idx = sec.flights.findIndex(f => f.id === flightId);
-        if (idx !== -1) sec.flights[idx] = flightData;
-      } else {
-        sec.flights.push(flightData);
-      }
-
-      closeFlightForm();
-      saveStandbyData();
-    }
-
-    function promptAddSector() {
-      const title = prompt("請輸入新 Sector 航線名稱 (例: BOS - PHL):");
-      if (!title) return;
-
-      const dateInput = document.createElement("input");
-      dateInput.type = "date";
-      dateInput.value = "2026-10-20";
-      dateInput.style.position = "fixed";
-      dateInput.style.opacity = "0";
-      document.body.appendChild(dateInput);
-
-      dateInput.onchange = function() {
-        const formattedDate = formatDateWithWeekday(dateInput.value);
-        const isNyc = title.toUpperCase().includes("NYC") || title.toUpperCase().includes("EWR") || title.toUpperCase().includes("LGA") || title.toUpperCase().includes("JFK");
-        
-        standbyData.push({
-          id: "sec-" + Date.now(),
-          title: title,
-          date: formattedDate,
-          isNyc: isNyc,
-          nycFilter: "ALL",
-          isExpanded: true,
-          flights: []
-        });
-        saveStandbyData();
-        document.body.removeChild(dateInput);
-      };
-
-      dateInput.onblur = function() {
-        if (document.body.contains(dateInput)) {
-          document.body.removeChild(dateInput);
-        }
-      };
-
-      if (typeof dateInput.showPicker === "function") {
-        dateInput.showPicker();
-      } else {
-        dateInput.click();
-      }
-    }
-
-    function editSectorDate(secId) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-
-      const dateInput = document.createElement("input");
-      dateInput.type = "date";
-      dateInput.style.position = "fixed";
-      dateInput.style.opacity = "0";
-      document.body.appendChild(dateInput);
-
-      dateInput.onchange = function() {
-        if (dateInput.value) {
-          sec.date = formatDateWithWeekday(dateInput.value);
-          saveStandbyData();
-        }
-        document.body.removeChild(dateInput);
-      };
-
-      dateInput.onblur = function() {
-        if (document.body.contains(dateInput)) {
-          document.body.removeChild(dateInput);
-        }
-      };
-
-      if (typeof dateInput.showPicker === "function") {
-        dateInput.showPicker();
-      } else {
-        dateInput.click();
-      }
-    }
-
-    function deleteSector(secId) {
-      if (confirm("確定要刪除整個 Sector 及其所有航班嗎？")) {
-        standbyData = standbyData.filter(s => s.id !== secId);
-        saveStandbyData();
-      }
-    }
-
-    function setNycFilter(secId, filter) {
+    /* Airline Filter Setter */
+    function setAirlineFilter(secId, code) {
       const sec = standbyData.find(s => s.id === secId);
       if (sec) {
-        sec.nycFilter = filter;
+        sec.airlineFilter = code;
         renderStandbyView();
       }
     }
