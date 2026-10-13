@@ -50,7 +50,7 @@
       -webkit-user-select: none;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       padding-top: env(safe-area-inset-top);
-      padding-bottom: calc(env(safe-area-inset-bottom) + 5rem);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem);
     }
     
     .hide-scrollbar::-webkit-scrollbar {
@@ -63,17 +63,17 @@
 
     /* Dark Dynamic Glassmorphism */
     .glass-card {
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.78);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .glass-nav {
-      background: rgba(2, 6, 23, 0.85);
+      background: rgba(2, 6, 23, 0.9);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .pulse-glow {
@@ -108,17 +108,17 @@
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased min-h-screen">
 
-  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 pt-2 pb-3 px-4">
+  <header class="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 pt-2 pb-3 px-4">
     <div class="max-w-md mx-auto">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center space-x-2">
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30">
             iPhone 14 Pro
           </span>
-          <span class="text-xs font-semibold text-slate-400">10-Day Trip</span>
+          <span class="text-xs font-medium text-slate-300">10-Day Trip</span>
         </div>
-        <button id="todayBtn" onclick="jumpToToday()" class="px-3 py-1 bg-sky-600/20 hover:bg-sky-600/30 text-sky-400 border border-sky-500/30 rounded-full text-xs font-semibold flex items-center gap-1 active:scale-95 transition">
-          <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+        <button id="todayBtn" onclick="jumpToToday()" class="px-3 py-1 bg-sky-600/20 hover:bg-sky-600/30 text-sky-400 border border-sky-500/30 rounded-full text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition">
+          <i data-lucide="compass" class="w-4 h-4"></i>
           <span>今天行程</span>
         </button>
       </div>
@@ -127,7 +127,7 @@
         <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2" id="headerPageTitle">
           <span>🇺🇸 美國之旅 2026</span>
         </h1>
-        <span id="tripProgressText" class="text-xs font-medium text-slate-400">Day 1 / 10</span>
+        <span id="tripProgressText" class="text-xs font-semibold text-slate-300">Day 1 / 10</span>
       </div>
 
       <!-- Days Scrollbar Header -->
@@ -144,43 +144,43 @@
       <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300">
         <div class="flex justify-between items-start gap-2">
           <div>
-            <span id="dayBadge" class="text-[11px] font-bold uppercase tracking-wider text-sky-400"></span>
+            <span id="dayBadge" class="text-xs font-bold uppercase tracking-wider text-sky-400"></span>
             <h2 id="dayTitle" class="text-lg font-bold text-white mt-0.5"></h2>
           </div>
-          <div id="dayLocationBadge" class="px-2.5 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-medium flex items-center gap-1 shrink-0">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+          <div id="dayLocationBadge" class="px-3 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-semibold flex items-center gap-1.5 shrink-0">
+            <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
             <span id="dayLocationText">--</span>
           </div>
         </div>
 
         <div id="hotelBar" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-          <div class="flex items-center space-x-2 text-slate-300 truncate">
+          <div class="flex items-center space-x-2 text-slate-200 truncate pr-2">
             <i data-lucide="bed" class="w-4 h-4 text-amber-400 shrink-0"></i>
-            <span id="hotelText" class="truncate font-medium">--</span>
+            <span id="hotelText" class="truncate font-semibold">--</span>
           </div>
-          <a id="hotelMapBtn" href="#" target="_blank" class="shrink-0 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-medium flex items-center gap-1">
+          <a id="hotelMapBtn" href="#" target="_blank" class="shrink-0 px-3 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1">
             <span>導航</span>
-            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
           </a>
         </div>
       </div>
 
-      <div id="highlightBanner" class="hidden glass-card rounded-xl p-3 border-l-4 border-l-rose-500 bg-rose-950/20 flex items-center space-x-3">
-        <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg shrink-0">
+      <div id="highlightBanner" class="hidden glass-card rounded-xl p-3.5 border-l-4 border-l-rose-500 bg-rose-950/25 flex items-center space-x-3">
+        <div class="p-2 bg-rose-500/20 text-rose-400 rounded-xl shrink-0">
           <i data-lucide="heart" class="w-5 h-5"></i>
         </div>
         <div>
           <p class="text-xs font-bold text-rose-300" id="bannerTitle">Anniversary Highlights 🎉</p>
-          <p class="text-[11px] text-slate-300" id="bannerSubtitle">Battello 晚餐（日落位觀賞曼哈頓夜景）</p>
+          <p class="text-xs text-slate-200 mt-0.5" id="bannerSubtitle">Battello 晚餐（日落位觀賞曼哈頓夜景）</p>
         </div>
       </div>
 
       <div class="flex items-center justify-between px-1 pt-1">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-          <i data-lucide="clock" class="w-3.5 h-3.5 text-sky-400"></i>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+          <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
           <span>詳細行程 Timeline</span>
         </h3>
-        <span class="text-[11px] text-slate-500">點擊地址開啟 Google Maps</span>
+        <span class="text-xs text-slate-400">點擊地址開啟 Google Maps</span>
       </div>
 
       <div id="timelineContainer" class="space-y-3">
@@ -190,18 +190,18 @@
 
     <!-- VIEW 2: STANDBY FLIGHTS -->
     <section id="viewStandby" class="hidden space-y-4">
-      <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+      <div class="flex justify-between items-center bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
         <div>
           <h2 class="text-sm font-bold text-white">候補航線管理</h2>
-          <p class="text-[10px] text-slate-400">完整涵蓋 BOS-NYC / YYZ-BOS / NYC-BOS / NYC-ORD</p>
+          <p class="text-xs text-slate-300 mt-0.5">支援 Airline、NYC 機場及 Terminal 篩選</p>
         </div>
         <div class="flex gap-1.5">
-          <button onclick="resetToDefaultStandbyList()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium flex items-center gap-1 active:scale-95 transition border border-slate-700">
-            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+          <button onclick="resetToDefaultStandbyList()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1 active:scale-95 transition border border-slate-700">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
             <span>重置</span>
           </button>
           <button onclick="promptAddSector()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-95 transition shadow-lg shadow-sky-500/20">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <i data-lucide="plus" class="w-4 h-4"></i>
             <span>新增 Sector</span>
           </button>
         </div>
@@ -214,12 +214,12 @@
 
     <!-- VIEW 3: HOTELS VIEW -->
     <section id="viewHotels" class="hidden space-y-3">
-      <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+      <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
           <i data-lucide="bed" class="w-4 h-4 text-amber-400"></i>
           <span>全程住宿總覽 (Hotels Overview)</span>
         </h2>
-        <p class="text-[10px] text-slate-400">10 天行程入住飯店地址與導航連結</p>
+        <p class="text-xs text-slate-300 mt-0.5">10 天行程入住飯店地址與導航連結</p>
       </div>
       <div class="space-y-3" id="hotelModalList">
         <!-- Injected via JS -->
@@ -228,40 +228,40 @@
 
     <!-- VIEW 4: CHECKLIST VIEW -->
     <section id="viewChecklist" class="hidden space-y-3">
-      <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+      <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
           <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
           <span>出發前備忘 Checklist</span>
         </h2>
-        <p class="text-[10px] text-slate-400">重要證件、預約證明與行李確認項</p>
+        <p class="text-xs text-slate-300 mt-0.5">重要證件、預約證明與行李確認項</p>
       </div>
-      <div class="space-y-2" id="checklistContainer">
+      <div class="space-y-2.5" id="checklistContainer">
         <!-- Injected via JS -->
       </div>
     </section>
 
   </main>
 
-  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-6 py-2">
+  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-4 py-2.5">
     <div class="max-w-md mx-auto flex items-center justify-around">
       <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
         <i data-lucide="calendar" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold">每日行程</span>
+        <span class="text-xs font-semibold">每日行程</span>
       </button>
 
       <button onclick="switchView('standby')" id="navStandby" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
         <i data-lucide="plane-landing" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold">候補機位</span>
+        <span class="text-xs font-semibold">候補機位</span>
       </button>
       
       <button onclick="switchView('hotels')" id="navHotels" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
         <i data-lucide="bed" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold">酒店住宿</span>
+        <span class="text-xs font-semibold">酒店住宿</span>
       </button>
 
       <button onclick="switchView('checklist')" id="navChecklist" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200 relative">
         <i data-lucide="check-square" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold">出發備忘</span>
+        <span class="text-xs font-semibold">出發備忘</span>
       </button>
     </div>
   </nav>
@@ -285,38 +285,38 @@
 
         <div class="grid grid-cols-3 gap-2">
           <div class="min-w-0">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Airline Code</label>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Airline Code</label>
             <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 uppercase">
           </div>
           <div class="col-span-2 min-w-0">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No.</label>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">航班號 Flight No.</label>
             <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
         <div class="min-w-0">
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司名稱 (自動對照)</label>
-          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-400 focus:outline-none cursor-not-allowed">
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">航空公司名稱 (自動對照)</label>
+          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none cursor-not-allowed">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div class="min-w-0 overflow-hidden">
-            <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (STD)</label>
+            <label class="block text-xs font-bold text-sky-400 uppercase mb-1">起飛時間 (STD)</label>
             <input type="time" id="formDepTime" onchange="handleDepTimeChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
           <div class="min-w-0 overflow-hidden">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Terminal</label>
             <input type="text" id="formTerminal" placeholder="例: B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
         <div class="min-w-0 overflow-hidden">
-          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間 (-2 hrs)</label>
+          <label class="block text-xs font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間 (-2 hrs)</label>
           <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
         </div>
 
         <div id="nycAirportSelectGroup" class="min-w-0">
-          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Airport)</label>
+          <label class="block text-xs font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Airport)</label>
           <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
             <option value="EWR">EWR (Newark)</option>
             <option value="LGA">LGA (LaGuardia)</option>
@@ -326,7 +326,7 @@
         </div>
 
         <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeFlightForm()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-700">取消</button>
+          <button type="button" onclick="closeFlightForm()" class="px-4 py-2 bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-700">取消</button>
           <button type="submit" class="px-4 py-2 bg-sky-500 text-white rounded-xl text-xs font-bold hover:bg-sky-600 shadow-md shadow-sky-500/20">儲存變更</button>
         </div>
       </form>
@@ -533,7 +533,7 @@
       nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
     }
 
-    /* FULL USER SUPPLIED FLIGHT LIST */
+    /* FULL USER SUPPLIED FLIGHT LIST WITH TERMINAL FILTERS */
     const defaultStandbyData = [
       {
         id: "sec-bos-nyc",
@@ -542,6 +542,7 @@
         isNyc: true,
         nycFilter: "ALL",
         airlineFilter: "ALL",
+        terminalFilter: "ALL",
         isExpanded: true,
         flights: [
           { id: "f_bn_1", airlineCode: "AA", flightNo: "4630", terminal: "B", apt: "LGA", depTime: "06:00", checkinTime: "04:00" },
@@ -607,6 +608,7 @@
         isNyc: false,
         nycFilter: "ALL",
         airlineFilter: "ALL",
+        terminalFilter: "ALL",
         isExpanded: true,
         flights: [
           { id: "f_yb_1", airlineCode: "PD", flightNo: "6153", terminal: "T3", apt: "YYZ", depTime: "07:25", checkinTime: "05:25" },
@@ -625,6 +627,7 @@
         isNyc: true,
         nycFilter: "ALL",
         airlineFilter: "ALL",
+        terminalFilter: "ALL",
         isExpanded: true,
         flights: [
           { id: "f_nb_1", airlineCode: "B6", flightNo: "2718", terminal: "5", apt: "JFK", depTime: "06:35", checkinTime: "04:35" },
@@ -665,6 +668,7 @@
         isNyc: true,
         nycFilter: "ALL",
         airlineFilter: "ALL",
+        terminalFilter: "ALL",
         isExpanded: false,
         flights: [
           { id: "f_no_1", airlineCode: "AA", flightNo: "3185", terminal: "A", apt: "EWR", depTime: "05:31", checkinTime: "03:31" },
@@ -734,6 +738,14 @@
       }
     }
 
+    function setTerminalFilter(secId, term) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (sec) {
+        sec.terminalFilter = term;
+        renderStandbyView();
+      }
+    }
+
     function editSectorDate(secId) {
       const sec = standbyData.find(s => s.id === secId);
       if (!sec) return;
@@ -757,6 +769,7 @@
         isNyc: isNyc,
         nycFilter: "ALL",
         airlineFilter: "ALL",
+        terminalFilter: "ALL",
         isExpanded: true,
         flights: []
       };
@@ -883,6 +896,10 @@
           new Set(sec.flights.map(f => (f.airlineCode || '').toUpperCase()).filter(Boolean))
         ).sort();
 
+        const availableTerminals = Array.from(
+          new Set(sec.flights.map(f => (f.terminal || '').trim()).filter(Boolean))
+        ).sort();
+
         let displayedFlights = [...sec.flights];
 
         if (sec.isNyc && sec.nycFilter && sec.nycFilter !== "ALL") {
@@ -891,6 +908,10 @@
 
         if (sec.airlineFilter && sec.airlineFilter !== "ALL") {
           displayedFlights = displayedFlights.filter(f => (f.airlineCode || '').toUpperCase() === sec.airlineFilter);
+        }
+
+        if (sec.terminalFilter && sec.terminalFilter !== "ALL") {
+          displayedFlights = displayedFlights.filter(f => (f.terminal || '').trim() === sec.terminalFilter);
         }
 
         const isExpanded = sec.isExpanded ?? true;
@@ -903,47 +924,72 @@
                 <i data-lucide="map-pin" class="w-4 h-4 ${theme.text}"></i>
                 <span>${sec.title}</span>
               </h3>
-              ${sec.date ? `<span class="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">${sec.date}</span>` : ''}
-              <span class="text-[10px] font-bold ${theme.badgeBg} ${theme.text} px-2 py-0.5 rounded-full border ${theme.border}">
-                ${displayedFlights.length} / ${sec.flights.length} 班航班
+              ${sec.date ? `<span class="text-xs font-bold bg-slate-800 text-slate-200 px-2 py-0.5 rounded-full border border-slate-700">${sec.date}</span>` : ''}
+              <span class="text-xs font-bold ${theme.badgeBg} ${theme.text} px-2 py-0.5 rounded-full border ${theme.border}">
+                ${displayedFlights.length} / ${sec.flights.length} 班
               </span>
             </div>
 
             <div class="flex items-center gap-1" onclick="event.stopPropagation()">
-              <button onclick="editSectorDate('${sec.id}')" title="修改日期" class="text-slate-400 hover:text-sky-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-slate-800">
-                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <button onclick="editSectorDate('${sec.id}')" title="修改日期" class="text-slate-300 hover:text-sky-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-slate-800">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
               </button>
               <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-rose-500/10">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
           </div>
 
           ${isExpanded ? `
-            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-3">
+            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2.5">
               
               <!-- Filter Controls Container -->
-              <div class="space-y-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+              <div class="space-y-2 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
                 <!-- Airline Code Filter -->
                 <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-sky-400 shrink-0 w-16">Airline 篩選:</span>
+                  <span class="text-xs font-bold text-sky-400 shrink-0 w-20">航空公司:</span>
                   <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
                     <button onclick="setAirlineFilter('${sec.id}', 'ALL')" 
-                      class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                      class="px-2.5 py-1 rounded-full text-xs font-bold transition shrink-0 ${
                         (!sec.airlineFilter || sec.airlineFilter === 'ALL') 
                           ? `${theme.activeTab} pulse-glow` 
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                       }">
-                      ALL 全部
+                      全部
                     </button>
                     ${availableAirlines.map(code => `
                       <button onclick="setAirlineFilter('${sec.id}', '${code}')" 
-                        class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                        class="px-2.5 py-1 rounded-full text-xs font-bold transition shrink-0 ${
                           sec.airlineFilter === code 
                             ? `${theme.activeTab} pulse-glow` 
-                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                         }">
                         ${code}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Terminal Filter -->
+                <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
+                  <span class="text-xs font-bold text-emerald-400 shrink-0 w-20">航廈 Terminal:</span>
+                  <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
+                    <button onclick="setTerminalFilter('${sec.id}', 'ALL')" 
+                      class="px-2.5 py-1 rounded-full text-xs font-bold transition shrink-0 ${
+                        (!sec.terminalFilter || sec.terminalFilter === 'ALL') 
+                          ? 'bg-emerald-500 text-slate-950 font-black pulse-glow' 
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      }">
+                      全部
+                    </button>
+                    ${availableTerminals.map(term => `
+                      <button onclick="setTerminalFilter('${sec.id}', '${term}')" 
+                        class="px-2.5 py-1 rounded-full text-xs font-bold transition shrink-0 ${
+                          sec.terminalFilter === term 
+                            ? 'bg-emerald-500 text-slate-950 font-black pulse-glow' 
+                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                        }">
+                        T${term}
                       </button>
                     `).join('')}
                   </div>
@@ -952,14 +998,14 @@
                 <!-- NYC Airport Filter -->
                 ${sec.isNyc ? `
                   <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
-                    <span class="text-[10px] font-bold text-amber-400 shrink-0 w-16">機場 篩選:</span>
+                    <span class="text-xs font-bold text-amber-400 shrink-0 w-20">紐約機場:</span>
                     <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
                       ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
                         <button onclick="setNycFilter('${sec.id}', '${apt}')" 
-                          class="px-2 py-0.5 rounded-full text-[10px] font-bold transition shrink-0 ${
+                          class="px-2.5 py-1 rounded-full text-xs font-bold transition shrink-0 ${
                             (!sec.nycFilter || sec.nycFilter === apt) 
                               ? 'bg-amber-500 text-slate-950 font-black pulse-glow' 
-                              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                           }">
                           ${apt}
                         </button>
@@ -973,45 +1019,45 @@
               <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                 ${displayedFlights.length === 0 ? `
                   <div class="p-4 text-center text-xs text-slate-400 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
-                    沒有符合目前條件的候補航班
+                    沒有符合目前篩選條件的候補航班
                   </div>
                 ` : displayedFlights.map(f => {
                   const code = (f.airlineCode || '').toUpperCase();
-                  const airlineFullName = airlineMapping[code] || f.airline || '未知航空公司';
+                  const airlineFullName = airlineMapping[code] || f.airline || '其他航空公司';
                   const fullFlightNo = `${code}${f.flightNo || ''}`;
 
                   return `
-                  <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
+                  <div class="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-2 hover:border-slate-700 transition">
                     <div class="flex justify-between items-start">
                       <div>
-                        <div class="flex items-center gap-1.5 flex-wrap">
+                        <div class="flex items-center gap-2 flex-wrap">
                           <span class="text-xs font-extrabold text-white">${airlineFullName}</span>
-                          <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${fullFlightNo}</span>
-                          ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
+                          <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-2 py-0.5 rounded border ${theme.border}">${fullFlightNo}</span>
+                          ${sec.isNyc ? `<span class="text-xs font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">${f.apt}</span>` : ''}
                         </div>
                       </div>
-                      <div class="flex items-center gap-1 shrink-0">
-                        <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
-                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1.5 text-slate-300 hover:text-sky-300">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-rose-400">
-                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1.5 text-slate-300 hover:text-rose-400">
+                          <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                       </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
-                      <div><span class="text-slate-500 block text-[9px]">起飛時間 (STD)</span><strong class="text-white">${f.depTime || '--'}</strong></div>
-                      <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal ? 'T' + f.terminal : '--'}</strong></div>
-                      <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
+                    <div class="grid grid-cols-3 gap-2 text-xs pt-2 border-t border-slate-800/80 text-slate-200">
+                      <div><span class="text-slate-400 block text-[11px] mb-0.5">起飛時間 (STD)</span><strong class="text-white text-sm">${f.depTime || '--'}</strong></div>
+                      <div><span class="text-slate-400 block text-[11px] mb-0.5">Terminal</span><strong class="text-emerald-300 text-sm font-bold">${f.terminal ? 'T' + f.terminal : '--'}</strong></div>
+                      <div><span class="text-slate-400 block text-[11px] mb-0.5">報到/Standby</span><strong class="text-amber-300 text-sm font-bold">${f.checkinTime || '--'}</strong></div>
                     </div>
                   </div>
                   `;
                 }).join('')}
               </div>
 
-              <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-2 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
-                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+              <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-2.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
                 <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
               </button>
             </div>
@@ -1042,15 +1088,15 @@
       
       tripData.forEach((data, idx) => {
         const btn = document.createElement("button");
-        btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex flex-col items-center ${
+        btn.className = `px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex flex-col items-center ${
           idx === currentDayIndex 
             ? "bg-sky-500 text-white pulse-glow" 
-            : "bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700"
+            : "bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700"
         }`;
         btn.onclick = () => selectDay(idx);
         btn.innerHTML = `
           <span>Day ${data.day}</span>
-          <span class="text-[9px] font-normal opacity-80">${data.date.split(" ")[0]}</span>
+          <span class="text-[10px] font-medium opacity-90 mt-0.5">${data.date.split(" ")[0]}</span>
         `;
         container.appendChild(btn);
       });
@@ -1085,32 +1131,32 @@
 
       data.events.forEach(evt => {
         const item = document.createElement("div");
-        item.className = "glass-card rounded-xl p-3 flex items-start space-x-3 hover:border-slate-700 transition";
+        item.className = "glass-card rounded-xl p-3.5 flex items-start space-x-3.5 hover:border-slate-700 transition";
         
         let iconName = "map-pin";
-        let iconBg = "bg-sky-500/10 text-sky-400 border-sky-500/20";
+        let iconBg = "bg-sky-500/15 text-sky-400 border-sky-500/30";
         
-        if (evt.tag === "flight") { iconName = "plane"; iconBg = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"; }
-        else if (evt.tag === "hotel") { iconName = "bed"; iconBg = "bg-amber-500/10 text-amber-400 border-amber-500/20"; }
-        else if (evt.tag === "food") { iconName = "utensils"; iconBg = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"; }
-        else if (evt.tag === "shopping") { iconName = "shopping-bag"; iconBg = "bg-purple-500/10 text-purple-400 border-purple-500/20"; }
-        else if (evt.tag === "heart") { iconName = "heart"; iconBg = "bg-rose-500/10 text-rose-400 border-rose-500/20"; }
+        if (evt.tag === "flight") { iconName = "plane"; iconBg = "bg-indigo-500/15 text-indigo-400 border-indigo-500/30"; }
+        else if (evt.tag === "hotel") { iconName = "bed"; iconBg = "bg-amber-500/15 text-amber-400 border-amber-500/30"; }
+        else if (evt.tag === "food") { iconName = "utensils"; iconBg = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"; }
+        else if (evt.tag === "shopping") { iconName = "shopping-bag"; iconBg = "bg-purple-500/15 text-purple-400 border-purple-500/30"; }
+        else if (evt.tag === "heart") { iconName = "heart"; iconBg = "bg-rose-500/15 text-rose-400 border-rose-500/30"; }
 
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || evt.name)}`;
 
         item.innerHTML = `
-          <div class="flex flex-col items-center shrink-0">
-            <span class="text-[11px] font-bold text-sky-400 mb-1">${evt.time}</span>
-            <div class="w-8 h-8 rounded-lg border ${iconBg} flex items-center justify-center">
-              <i data-lucide="${iconName}" class="w-4 h-4"></i>
+          <div class="flex flex-col items-center shrink-0 pt-0.5">
+            <span class="text-xs font-bold text-sky-400 mb-1">${evt.time}</span>
+            <div class="w-9 h-9 rounded-xl border ${iconBg} flex items-center justify-center">
+              <i data-lucide="${iconName}" class="w-4.5 h-4.5"></i>
             </div>
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-white truncate">${evt.name}</h4>
-            <p class="text-[11px] text-slate-300 mt-0.5 leading-snug">${evt.desc}</p>
+            <h4 class="text-xs font-bold text-white">${evt.name}</h4>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">${evt.desc}</p>
             ${evt.location ? `
-              <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 mt-1.5 text-[10px] text-sky-400 hover:underline">
-                <i data-lucide="navigation" class="w-3.3"></i>
+              <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1.5 mt-2 text-xs text-sky-400 font-semibold hover:underline">
+                <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
                 <span class="truncate">${evt.location}</span>
               </a>
             ` : ''}
@@ -1134,10 +1180,10 @@
       
       checklistData.forEach(item => {
         const row = document.createElement("div");
-        row.className = "flex items-center space-x-3 glass-card p-3 rounded-xl";
+        row.className = "flex items-center space-x-3.5 glass-card p-3.5 rounded-xl";
         row.innerHTML = `
-          <input type="checkbox" id="${item.id}" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="task-checkbox w-4 h-4 accent-sky-500 rounded border-slate-700 bg-slate-900">
-          <label for="${item.id}" class="text-xs text-slate-200 flex-1 font-medium select-none cursor-pointer">${item.text}</label>
+          <input type="checkbox" id="${item.id}" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${item.id}')" class="task-checkbox w-4.5 h-4.5 accent-sky-500 rounded border-slate-700 bg-slate-900">
+          <label for="${item.id}" class="text-xs text-slate-200 flex-1 font-semibold select-none cursor-pointer leading-snug">${item.text}</label>
         `;
         container.appendChild(row);
       });
@@ -1163,15 +1209,15 @@
 
       hotels.forEach(h => {
         const div = document.createElement("div");
-        div.className = "glass-card p-3.5 rounded-xl space-y-1";
+        div.className = "glass-card p-4 rounded-xl space-y-1.5";
         div.innerHTML = `
-          <div class="flex justify-between items-start">
+          <div class="flex justify-between items-start gap-2">
             <h4 class="text-xs font-bold text-white">${h.name}</h4>
-            <span class="text-[10px] font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">${h.days}</span>
+            <span class="text-xs font-semibold text-amber-400 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30 shrink-0">${h.days}</span>
           </div>
-          <p class="text-[11px] text-slate-400">${h.addr}</p>
-          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.addr)}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-sky-400 mt-1">
-            <i data-lucide="map" class="w-3 h-3"></i> 地圖導航
+          <p class="text-xs text-slate-300">${h.addr}</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.addr)}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-sky-400 font-semibold mt-1">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i> 地圖導航
           </a>
         `;
         container.appendChild(div);
@@ -1209,6 +1255,7 @@
       } else if (view === 'checklist') {
         document.getElementById('viewChecklist').classList.remove('hidden');
         document.getElementById('navChecklist').className = "flex flex-col items-center space-y-1 text-sky-400";
+        document.getElementById('headerPageTitle', '出發備忘 Checklist');
         document.getElementById('headerPageTitle').innerHTML = '<span>出發備忘 Checklist</span>';
         dayTabs.classList.add('hidden');
         progressText.classList.add('hidden');
@@ -1216,6 +1263,7 @@
         document.getElementById('viewTimeline').classList.remove('hidden');
         document.getElementById('navTimeline').className = "flex flex-col items-center space-y-1 text-sky-400";
         document.getElementById('headerPageTitle').innerHTML = '<span>🇺🇸 美國之旅 2026</span>';
+        dayTabs.classList.add('hidden');
         dayTabs.classList.remove('hidden');
         progressText.classList.remove('hidden');
       }
