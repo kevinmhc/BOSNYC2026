@@ -193,12 +193,18 @@
       <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <div>
           <h2 class="text-sm font-bold text-white">候補航線管理</h2>
-          <p class="text-[10px] text-slate-400">支援按機場 (NYC) 及航空公司 (AA / DL / UA / B6 等) 雙重篩選</p>
+          <p class="text-[10px] text-slate-400">完整涵蓋 BOS-NYC / YYZ-BOS / NYC-BOS / NYC-ORD</p>
         </div>
-        <button onclick="promptAddSector()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-95 transition shadow-lg shadow-sky-500/20">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>新增 Sector</span>
-        </button>
+        <div class="flex gap-1.5">
+          <button onclick="resetToDefaultStandbyList()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium flex items-center gap-1 active:scale-95 transition border border-slate-700">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+            <span>重置</span>
+          </button>
+          <button onclick="promptAddSector()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-95 transition shadow-lg shadow-sky-500/20">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>新增 Sector</span>
+          </button>
+        </div>
       </div>
 
       <div id="standbySectorsContainer" class="space-y-4">
@@ -260,6 +266,7 @@
     </div>
   </nav>
 
+  <!-- Flight Form Modal -->
   <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative overflow-hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -294,12 +301,12 @@
 
         <div class="grid grid-cols-2 gap-2">
           <div class="min-w-0 overflow-hidden">
-            <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (Departure)</label>
+            <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (STD)</label>
             <input type="time" id="formDepTime" onchange="handleDepTimeChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
           <div class="min-w-0 overflow-hidden">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
-            <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
+            <input type="text" id="formTerminal" placeholder="例: B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
@@ -309,7 +316,7 @@
         </div>
 
         <div id="nycAirportSelectGroup" class="min-w-0">
-          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Sector)</label>
+          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Airport)</label>
           <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
             <option value="EWR">EWR (Newark)</option>
             <option value="LGA">LGA (LaGuardia)</option>
@@ -510,10 +517,12 @@
       "AA": "American Airlines",
       "UA": "United Airlines",
       "DL": "Delta Air Lines",
-      "B6": "Jet Blue",
+      "B6": "JetBlue",
       "AS": "Alaska Airlines",
       "PD": "Porter Airlines",
-      "AC": "Air Canada"
+      "AC": "Air Canada",
+      "BA": "British Airways",
+      "AT": "Royal Air Maroc"
     };
 
     function autoLookupAirline() {
@@ -524,25 +533,10 @@
       nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
     }
 
-    let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
+    /* FULL USER SUPPLIED FLIGHT LIST */
+    const defaultStandbyData = [
       {
-        id: "sec-1",
-        title: "YYZ - BOS (多倫多 → 波士頓)",
-        date: "10/17 (六)",
-        isNyc: false,
-        nycFilter: "ALL",
-        airlineFilter: "ALL",
-        isExpanded: true,
-        flights: [
-          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "08:30", terminal: "T1", checkinTime: "06:30", apt: "YYZ" },
-          { id: "f2", airlineCode: "AC", flightNo: "8802", depTime: "11:15", terminal: "T1", checkinTime: "09:15", apt: "YYZ" },
-          { id: "f3", airlineCode: "PD", flightNo: "223", depTime: "13:45", terminal: "YTZ", checkinTime: "11:45", apt: "YTZ" },
-          { id: "f4", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:20", apt: "YYZ" },
-          { id: "f5", airlineCode: "AC", flightNo: "8808", depTime: "20:00", terminal: "T1", checkinTime: "18:00", apt: "YYZ" }
-        ]
-      },
-      {
-        id: "sec-2",
+        id: "sec-bos-nyc",
         title: "BOS - NYC (波士頓 → 紐約區)",
         date: "10/19 (一)",
         isNyc: true,
@@ -550,23 +544,82 @@
         airlineFilter: "ALL",
         isExpanded: true,
         flights: [
-          { id: "f6", airlineCode: "DL", flightNo: "2611", depTime: "06:00", terminal: "Terminal A", checkinTime: "04:00", apt: "LGA" },
-          { id: "f7", airlineCode: "AA", flightNo: "4630", depTime: "06:00", terminal: "Terminal B", checkinTime: "04:00", apt: "LGA" },
-          { id: "f8", airlineCode: "B6", flightNo: "917", depTime: "07:10", terminal: "Terminal C", checkinTime: "05:10", apt: "JFK" },
-          { id: "f9", airlineCode: "UA", flightNo: "1820", depTime: "08:30", terminal: "Terminal B", checkinTime: "06:30", apt: "EWR" },
-          { id: "f10", airlineCode: "DL", flightNo: "5732", depTime: "09:00", terminal: "Terminal A", checkinTime: "07:00", apt: "LGA" },
-          { id: "f11", airlineCode: "B6", flightNo: "1017", depTime: "09:45", terminal: "Terminal C", checkinTime: "07:45", apt: "JFK" },
-          { id: "f12", airlineCode: "AA", flightNo: "1489", depTime: "12:15", terminal: "Terminal B", checkinTime: "10:15", apt: "LGA" },
-          { id: "f13", airlineCode: "DL", flightNo: "5808", depTime: "13:35", terminal: "Terminal A", checkinTime: "11:35", apt: "JFK" },
-          { id: "f14", airlineCode: "AA", flightNo: "1821", depTime: "13:41", terminal: "Terminal B", checkinTime: "11:41", apt: "LGA" },
-          { id: "f15", airlineCode: "UA", flightNo: "3502", depTime: "16:15", terminal: "Terminal B", checkinTime: "14:15", apt: "EWR" },
-          { id: "f16", airlineCode: "B6", flightNo: "817", depTime: "18:39", terminal: "Terminal C", checkinTime: "16:39", apt: "JFK" },
-          { id: "f17", airlineCode: "AA", flightNo: "4723", depTime: "19:35", terminal: "Terminal B", checkinTime: "17:35", apt: "LGA" },
-          { id: "f18", airlineCode: "DL", flightNo: "5702", depTime: "21:20", terminal: "Terminal A", checkinTime: "19:20", apt: "LGA" }
+          { id: "f_bn_1", airlineCode: "AA", flightNo: "4630", terminal: "B", apt: "LGA", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_bn_2", airlineCode: "UA", flightNo: "1833", terminal: "B", apt: "EWR", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_bn_3", airlineCode: "DL", flightNo: "2611", terminal: "A", apt: "JFK", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_bn_4", airlineCode: "DL", flightNo: "5816", terminal: "A", apt: "LGA", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_bn_5", airlineCode: "AA", flightNo: "4357", terminal: "B", apt: "JFK", depTime: "06:01", checkinTime: "04:01" },
+          { id: "f_bn_6", airlineCode: "DL", flightNo: "5764", terminal: "A", apt: "EWR", depTime: "06:20", checkinTime: "04:20" },
+          { id: "f_bn_7", airlineCode: "B6", flightNo: "917", terminal: "C", apt: "JFK", depTime: "06:55", checkinTime: "04:55" },
+          { id: "f_bn_8", airlineCode: "AA", flightNo: "2800", terminal: "B", apt: "LGA", depTime: "07:00", checkinTime: "05:00" },
+          { id: "f_bn_9", airlineCode: "DL", flightNo: "2524", terminal: "A", apt: "LGA", depTime: "07:00", checkinTime: "05:00" },
+          { id: "f_bn_10", airlineCode: "UA", flightNo: "570", terminal: "B", apt: "EWR", depTime: "07:38", checkinTime: "05:38" },
+          { id: "f_bn_11", airlineCode: "AA", flightNo: "4371", terminal: "B", apt: "LGA", depTime: "07:59", checkinTime: "05:59" },
+          { id: "f_bn_12", airlineCode: "DL", flightNo: "5735", terminal: "A", apt: "LGA", depTime: "08:00", checkinTime: "06:00" },
+          { id: "f_bn_13", airlineCode: "DL", flightNo: "5732", terminal: "A", apt: "LGA", depTime: "09:00", checkinTime: "07:00" },
+          { id: "f_bn_14", airlineCode: "DL", flightNo: "5720", terminal: "A", apt: "JFK", depTime: "09:10", checkinTime: "07:10" },
+          { id: "f_bn_15", airlineCode: "B6", flightNo: "1017", terminal: "C", apt: "JFK", depTime: "09:46", checkinTime: "07:46" },
+          { id: "f_bn_16", airlineCode: "AA", flightNo: "3058", terminal: "B", apt: "LGA", depTime: "09:50", checkinTime: "07:50" },
+          { id: "f_bn_17", airlineCode: "UA", flightNo: "1307", terminal: "B", apt: "EWR", depTime: "09:51", checkinTime: "07:51" },
+          { id: "f_bn_18", airlineCode: "DL", flightNo: "5744", terminal: "A", apt: "LGA", depTime: "10:00", checkinTime: "08:00" },
+          { id: "f_bn_19", airlineCode: "UA", flightNo: "2394", terminal: "B", apt: "EWR", depTime: "10:51", checkinTime: "08:51" },
+          { id: "f_bn_20", airlineCode: "DL", flightNo: "5755", terminal: "A", apt: "LGA", depTime: "11:00", checkinTime: "09:00" },
+          { id: "f_bn_21", airlineCode: "DL", flightNo: "5854", terminal: "A", apt: "LGA", depTime: "12:00", checkinTime: "10:00" },
+          { id: "f_bn_22", airlineCode: "AA", flightNo: "1489", terminal: "B", apt: "LGA", depTime: "12:15", checkinTime: "10:15" },
+          { id: "f_bn_23", airlineCode: "AA", flightNo: "4687", terminal: "B", apt: "JFK", depTime: "12:29", checkinTime: "10:29" },
+          { id: "f_bn_24", airlineCode: "UA", flightNo: "2104", terminal: "B", apt: "EWR", depTime: "12:36", checkinTime: "10:36" },
+          { id: "f_bn_25", airlineCode: "DL", flightNo: "5829", terminal: "A", apt: "EWR", depTime: "12:45", checkinTime: "10:45" },
+          { id: "f_bn_26", airlineCode: "B6", flightNo: "717", terminal: "C", apt: "JFK", depTime: "13:00", checkinTime: "11:00" },
+          { id: "f_bn_27", airlineCode: "DL", flightNo: "5748", terminal: "A", apt: "LGA", depTime: "13:00", checkinTime: "11:00" },
+          { id: "f_bn_28", airlineCode: "DL", flightNo: "5808", terminal: "A", apt: "JFK", depTime: "13:35", checkinTime: "11:35" },
+          { id: "f_bn_29", airlineCode: "AA", flightNo: "1821", terminal: "B", apt: "LGA", depTime: "13:41", checkinTime: "11:41" },
+          { id: "f_bn_30", airlineCode: "DL", flightNo: "5730", terminal: "A", apt: "LGA", depTime: "14:00", checkinTime: "12:00" },
+          { id: "f_bn_31", airlineCode: "DL", flightNo: "5736", terminal: "A", apt: "LGA", depTime: "15:00", checkinTime: "13:00" },
+          { id: "f_bn_32", airlineCode: "AA", flightNo: "4420", terminal: "B", apt: "LGA", depTime: "15:20", checkinTime: "13:20" },
+          { id: "f_bn_33", airlineCode: "B6", flightNo: "317", terminal: "C", apt: "JFK", depTime: "15:41", checkinTime: "13:41" },
+          { id: "f_bn_34", airlineCode: "UA", flightNo: "1647", terminal: "B", apt: "EWR", depTime: "15:48", checkinTime: "13:48" },
+          { id: "f_bn_35", airlineCode: "DL", flightNo: "5726", terminal: "A", apt: "LGA", depTime: "16:00", checkinTime: "14:00" },
+          { id: "f_bn_36", airlineCode: "DL", flightNo: "5721", terminal: "A", apt: "LGA", depTime: "17:00", checkinTime: "15:00" },
+          { id: "f_bn_37", airlineCode: "DL", flightNo: "5814", terminal: "A", apt: "JFK", depTime: "17:05", checkinTime: "15:05" },
+          { id: "f_bn_38", airlineCode: "AA", flightNo: "4721", terminal: "B", apt: "JFK", depTime: "17:28", checkinTime: "15:28" },
+          { id: "f_bn_39", airlineCode: "AT", flightNo: "5017", terminal: "B", apt: "JFK", depTime: "17:28", checkinTime: "15:28" },
+          { id: "f_bn_40", airlineCode: "AA", flightNo: "3225", terminal: "B", apt: "LGA", depTime: "18:00", checkinTime: "16:00" },
+          { id: "f_bn_41", airlineCode: "DL", flightNo: "5831", terminal: "A", apt: "LGA", depTime: "18:00", checkinTime: "16:00" },
+          { id: "f_bn_42", airlineCode: "UA", flightNo: "555", terminal: "B", apt: "EWR", depTime: "18:01", checkinTime: "16:01" },
+          { id: "f_bn_43", airlineCode: "DL", flightNo: "5718", terminal: "A", apt: "EWR", depTime: "18:15", checkinTime: "16:15" },
+          { id: "f_bn_44", airlineCode: "B6", flightNo: "817", terminal: "C", apt: "JFK", depTime: "18:40", checkinTime: "16:40" },
+          { id: "f_bn_45", airlineCode: "DL", flightNo: "5716", terminal: "A", apt: "LGA", depTime: "19:00", checkinTime: "17:00" },
+          { id: "f_bn_46", airlineCode: "UA", flightNo: "1693", terminal: "B", apt: "EWR", depTime: "19:00", checkinTime: "17:00" },
+          { id: "f_bn_47", airlineCode: "AA", flightNo: "4723", terminal: "B", apt: "LGA", depTime: "19:35", checkinTime: "17:35" },
+          { id: "f_bn_48", airlineCode: "BA", flightNo: "5014", terminal: "B", apt: "LGA", depTime: "19:35", checkinTime: "17:35" },
+          { id: "f_bn_49", airlineCode: "DL", flightNo: "5621", terminal: "A", apt: "LGA", depTime: "20:00", checkinTime: "18:00" },
+          { id: "f_bn_50", airlineCode: "B6", flightNo: "1117", terminal: "C", apt: "JFK", depTime: "20:10", checkinTime: "18:10" },
+          { id: "f_bn_51", airlineCode: "UA", flightNo: "2060", terminal: "B", apt: "EWR", depTime: "20:25", checkinTime: "18:25" },
+          { id: "f_bn_52", airlineCode: "DL", flightNo: "5609", terminal: "A", apt: "LGA", depTime: "21:00", checkinTime: "19:00" },
+          { id: "f_bn_53", airlineCode: "DL", flightNo: "5702", terminal: "A", apt: "JFK", depTime: "21:20", checkinTime: "19:20" },
+          { id: "f_bn_54", airlineCode: "DL", flightNo: "5840", terminal: "A", apt: "LGA", depTime: "22:00", checkinTime: "20:00" }
         ]
       },
       {
-        id: "sec-3",
+        id: "sec-yyz-bos",
+        title: "YYZ - BOS (多倫多 → 波士頓)",
+        date: "10/17 (六)",
+        isNyc: false,
+        nycFilter: "ALL",
+        airlineFilter: "ALL",
+        isExpanded: true,
+        flights: [
+          { id: "f_yb_1", airlineCode: "PD", flightNo: "6153", terminal: "T3", apt: "YYZ", depTime: "07:25", checkinTime: "05:25" },
+          { id: "f_yb_2", airlineCode: "AC", flightNo: "7661", terminal: "T1", apt: "YYZ", depTime: "08:10", checkinTime: "06:10" },
+          { id: "f_yb_3", airlineCode: "AC", flightNo: "7681", terminal: "T1", apt: "YYZ", depTime: "10:05", checkinTime: "08:05" },
+          { id: "f_yb_4", airlineCode: "AC", flightNo: "7701", terminal: "T1", apt: "YYZ", depTime: "14:20", checkinTime: "12:20" },
+          { id: "f_yb_5", airlineCode: "AC", flightNo: "7721", terminal: "T1", apt: "YYZ", depTime: "16:25", checkinTime: "14:25" },
+          { id: "f_yb_6", airlineCode: "PD", flightNo: "6173", terminal: "T3", apt: "YYZ", depTime: "16:55", checkinTime: "14:55" },
+          { id: "f_yb_7", airlineCode: "AC", flightNo: "7641", terminal: "T1", apt: "YYZ", depTime: "20:55", checkinTime: "18:55" }
+        ]
+      },
+      {
+        id: "sec-nyc-bos",
         title: "NYC - BOS (紐約區 → 波士頓)",
         date: "10/24 (六)",
         isNyc: true,
@@ -574,25 +627,87 @@
         airlineFilter: "ALL",
         isExpanded: true,
         flights: [
-          { id: "f19", airlineCode: "DL", flightNo: "5765", depTime: "06:00", terminal: "Terminal C", checkinTime: "04:00", apt: "LGA" },
-          { id: "f20", airlineCode: "B6", flightNo: "2718", depTime: "06:40", terminal: "Terminal 5", checkinTime: "04:40", apt: "JFK" },
-          { id: "f21", airlineCode: "UA", flightNo: "1104", depTime: "08:15", terminal: "Terminal C", checkinTime: "06:15", apt: "EWR" },
-          { id: "f22", airlineCode: "DL", flightNo: "5733", depTime: "09:50", terminal: "Terminal C", checkinTime: "07:50", apt: "LGA" },
-          { id: "f23", airlineCode: "B6", flightNo: "1018", depTime: "09:25", terminal: "Terminal 5", checkinTime: "07:25", apt: "JFK" },
-          { id: "f24", airlineCode: "DL", flightNo: "5595", depTime: "13:15", terminal: "Terminal C", checkinTime: "11:15", apt: "LGA" },
-          { id: "f25", airlineCode: "B6", flightNo: "1118", depTime: "13:26", terminal: "Terminal 5", checkinTime: "11:26", apt: "JFK" },
-          { id: "f26", airlineCode: "UA", flightNo: "2390", depTime: "15:00", terminal: "Terminal C", checkinTime: "13:00", apt: "EWR" },
-          { id: "f27", airlineCode: "AA", flightNo: "4721", depTime: "17:28", terminal: "Terminal B", checkinTime: "15:28", apt: "LGA" },
-          { id: "f28", airlineCode: "B6", flightNo: "818", depTime: "17:48", terminal: "Terminal 5", checkinTime: "15:48", apt: "JFK" },
-          { id: "f29", airlineCode: "DL", flightNo: "2639", depTime: "21:29", terminal: "Terminal C", checkinTime: "19:29", apt: "LGA" },
-          { id: "f30", airlineCode: "UA", flightNo: "3810", depTime: "21:00", terminal: "Terminal C", checkinTime: "19:00", apt: "EWR" }
+          { id: "f_nb_1", airlineCode: "B6", flightNo: "2718", terminal: "5", apt: "JFK", depTime: "06:35", checkinTime: "04:35" },
+          { id: "f_nb_2", airlineCode: "DL", flightNo: "5793", terminal: "C", apt: "LGA", depTime: "07:00", checkinTime: "05:00" },
+          { id: "f_nb_3", airlineCode: "AA", flightNo: "4394", terminal: "B", apt: "LGA", depTime: "08:00", checkinTime: "06:00" },
+          { id: "f_nb_4", airlineCode: "AA", flightNo: "3648", terminal: "8", apt: "JFK", depTime: "08:10", checkinTime: "06:10" },
+          { id: "f_nb_5", airlineCode: "UA", flightNo: "3499", terminal: "C", apt: "EWR", depTime: "08:30", checkinTime: "06:30" },
+          { id: "f_nb_6", airlineCode: "B6", flightNo: "1018", terminal: "5", apt: "JFK", depTime: "09:30", checkinTime: "07:30" },
+          { id: "f_nb_7", airlineCode: "DL", flightNo: "5733", terminal: "4", apt: "JFK", depTime: "09:50", checkinTime: "07:50" },
+          { id: "f_nb_8", airlineCode: "DL", flightNo: "5728", terminal: "C", apt: "LGA", depTime: "10:00", checkinTime: "08:00" },
+          { id: "f_nb_9", airlineCode: "UA", flightNo: "375", terminal: "A", apt: "EWR", depTime: "10:10", checkinTime: "08:10" },
+          { id: "f_nb_10", airlineCode: "DL", flightNo: "5764", terminal: "A", apt: "EWR", depTime: "10:45", checkinTime: "08:45" },
+          { id: "f_nb_11", airlineCode: "UA", flightNo: "1669", terminal: "A", apt: "EWR", depTime: "11:25", checkinTime: "09:25" },
+          { id: "f_nb_12", airlineCode: "B6", flightNo: "1118", terminal: "5", apt: "JFK", depTime: "13:00", checkinTime: "11:00" },
+          { id: "f_nb_13", airlineCode: "UA", flightNo: "3552", terminal: "C", apt: "EWR", depTime: "13:13", checkinTime: "11:13" },
+          { id: "f_nb_14", airlineCode: "DL", flightNo: "5595", terminal: "4", apt: "JFK", depTime: "13:15", checkinTime: "11:15" },
+          { id: "f_nb_15", airlineCode: "DL", flightNo: "5739", terminal: "C", apt: "LGA", depTime: "13:59", checkinTime: "11:59" },
+          { id: "f_nb_16", airlineCode: "AA", flightNo: "4397", terminal: "8", apt: "JFK", depTime: "15:30", checkinTime: "13:30" },
+          { id: "f_nb_17", airlineCode: "B6", flightNo: "618", terminal: "5", apt: "JFK", depTime: "15:30", checkinTime: "13:30" },
+          { id: "f_nb_18", airlineCode: "UA", flightNo: "3508", terminal: "C", apt: "EWR", depTime: "15:46", checkinTime: "13:46" },
+          { id: "f_nb_19", airlineCode: "AA", flightNo: "4430", terminal: "B", apt: "LGA", depTime: "16:15", checkinTime: "14:15" },
+          { id: "f_nb_20", airlineCode: "DL", flightNo: "5798", terminal: "4", apt: "JFK", depTime: "17:26", checkinTime: "15:26" },
+          { id: "f_nb_21", airlineCode: "DL", flightNo: "1661", terminal: "C", apt: "LGA", depTime: "18:00", checkinTime: "16:00" },
+          { id: "f_nb_22", airlineCode: "UA", flightNo: "2763", terminal: "A", apt: "EWR", depTime: "18:00", checkinTime: "16:00" },
+          { id: "f_nb_23", airlineCode: "AA", flightNo: "4724", terminal: "B", apt: "LGA", depTime: "18:05", checkinTime: "16:05" },
+          { id: "f_nb_24", airlineCode: "BA", flightNo: "6846", terminal: "B", apt: "LGA", depTime: "18:05", checkinTime: "16:05" },
+          { id: "f_nb_25", airlineCode: "B6", flightNo: "818", terminal: "5", apt: "JFK", depTime: "18:49", checkinTime: "16:49" },
+          { id: "f_nb_26", airlineCode: "AA", flightNo: "4659", terminal: "8", apt: "JFK", depTime: "20:59", checkinTime: "18:59" },
+          { id: "f_nb_27", airlineCode: "UA", flightNo: "1117", terminal: "C", apt: "EWR", depTime: "21:23", checkinTime: "19:23" },
+          { id: "f_nb_28", airlineCode: "DL", flightNo: "2639", terminal: "4", apt: "JFK", depTime: "21:30", checkinTime: "19:30" },
+          { id: "f_nb_29", airlineCode: "B6", flightNo: "1318", terminal: "5", apt: "JFK", depTime: "22:29", checkinTime: "20:29" }
+        ]
+      },
+      {
+        id: "sec-nyc-ord",
+        title: "NYC - ORD (紐約區 → 芝加哥)",
+        date: "備用航段",
+        isNyc: true,
+        nycFilter: "ALL",
+        airlineFilter: "ALL",
+        isExpanded: false,
+        flights: [
+          { id: "f_no_1", airlineCode: "AA", flightNo: "3185", terminal: "A", apt: "EWR", depTime: "05:31", checkinTime: "03:31" },
+          { id: "f_no_2", airlineCode: "UA", flightNo: "2389", terminal: "B", apt: "LGA", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_no_3", airlineCode: "UA", flightNo: "530", terminal: "C", apt: "EWR", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_no_4", airlineCode: "AA", flightNo: "462", terminal: "B", apt: "LGA", depTime: "06:00", checkinTime: "04:00" },
+          { id: "f_no_5", airlineCode: "AA", flightNo: "1600", terminal: "A", apt: "EWR", depTime: "06:55", checkinTime: "04:55" },
+          { id: "f_no_6", airlineCode: "AA", flightNo: "392", terminal: "B", apt: "LGA", depTime: "07:01", checkinTime: "05:01" },
+          { id: "f_no_7", airlineCode: "AA", flightNo: "2907", terminal: "8", apt: "JFK", depTime: "07:14", checkinTime: "05:14" },
+          { id: "f_no_8", airlineCode: "UA", flightNo: "2754", terminal: "A", apt: "EWR", depTime: "07:17", checkinTime: "05:17" },
+          { id: "f_no_9", airlineCode: "DL", flightNo: "2917", terminal: "C", apt: "LGA", depTime: "07:20", checkinTime: "05:20" },
+          { id: "f_no_10", airlineCode: "UA", flightNo: "1008", terminal: "B", apt: "LGA", depTime: "07:23", checkinTime: "05:23" },
+          { id: "f_no_11", airlineCode: "DL", flightNo: "4903", terminal: "4", apt: "JFK", depTime: "07:30", checkinTime: "05:30" },
+          { id: "f_no_12", airlineCode: "UA", flightNo: "2488", terminal: "A", apt: "EWR", depTime: "07:55", checkinTime: "05:55" },
+          { id: "f_no_13", airlineCode: "UA", flightNo: "1166", terminal: "B", apt: "LGA", depTime: "08:10", checkinTime: "06:10" },
+          { id: "f_no_14", airlineCode: "AA", flightNo: "386", terminal: "B", apt: "LGA", depTime: "08:11", checkinTime: "06:11" },
+          { id: "f_no_15", airlineCode: "AA", flightNo: "2223", terminal: "B", apt: "LGA", depTime: "09:05", checkinTime: "07:05" },
+          { id: "f_no_16", airlineCode: "UA", flightNo: "2290", terminal: "A", apt: "EWR", depTime: "09:10", checkinTime: "07:10" },
+          { id: "f_no_17", airlineCode: "B6", flightNo: "905", terminal: "5", apt: "JFK", depTime: "09:30", checkinTime: "07:30" },
+          { id: "f_no_18", airlineCode: "AA", flightNo: "1814", terminal: "B", apt: "LGA", depTime: "10:01", checkinTime: "08:01" },
+          { id: "f_no_19", airlineCode: "UA", flightNo: "1310", terminal: "B", apt: "LGA", depTime: "10:20", checkinTime: "08:20" },
+          { id: "f_no_20", airlineCode: "UA", flightNo: "1525", terminal: "A", apt: "EWR", depTime: "10:22", checkinTime: "08:22" },
+          { id: "f_no_21", airlineCode: "AA", flightNo: "788", terminal: "8", apt: "JFK", depTime: "10:29", checkinTime: "08:29" },
+          { id: "f_no_22", airlineCode: "AA", flightNo: "3170", terminal: "A", apt: "EWR", depTime: "10:47", checkinTime: "08:47" },
+          { id: "f_no_23", airlineCode: "DL", flightNo: "5119", terminal: "4", apt: "JFK", depTime: "10:55", checkinTime: "08:55" },
+          { id: "f_no_24", airlineCode: "UA", flightNo: "1439", terminal: "C", apt: "EWR", depTime: "11:10", checkinTime: "09:10" },
+          { id: "f_no_25", airlineCode: "DL", flightNo: "2240", terminal: "C", apt: "LGA", depTime: "11:55", checkinTime: "09:55" }
         ]
       }
     ];
 
+    let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || defaultStandbyData;
+
     function saveStandbyData() {
       localStorage.setItem('us_trip_standby_data', JSON.stringify(standbyData));
       renderStandbyView();
+    }
+
+    function resetToDefaultStandbyList() {
+      if (confirm("確定要重置為原始完整 Standby 清單？")) {
+        standbyData = JSON.parse(JSON.stringify(defaultStandbyData));
+        saveStandbyData();
+      }
     }
 
     function toggleSectorExpand(secId) {
@@ -855,7 +970,7 @@
               </div>
 
               <!-- Flight List -->
-              <div class="space-y-2">
+              <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                 ${displayedFlights.length === 0 ? `
                   <div class="p-4 text-center text-xs text-slate-400 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
                     沒有符合目前條件的候補航班
@@ -886,8 +1001,8 @@
                     </div>
 
                     <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
-                      <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime || '--'}</strong></div>
-                      <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal || '--'}</strong></div>
+                      <div><span class="text-slate-500 block text-[9px]">起飛時間 (STD)</span><strong class="text-white">${f.depTime || '--'}</strong></div>
+                      <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal ? 'T' + f.terminal : '--'}</strong></div>
                       <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
                     </div>
                   </div>
@@ -995,7 +1110,7 @@
             <p class="text-[11px] text-slate-300 mt-0.5 leading-snug">${evt.desc}</p>
             ${evt.location ? `
               <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 mt-1.5 text-[10px] text-sky-400 hover:underline">
-                <i data-lucide="navigation" class="w-3-3"></i>
+                <i data-lucide="navigation" class="w-3.3"></i>
                 <span class="truncate">${evt.location}</span>
               </a>
             ` : ''}
