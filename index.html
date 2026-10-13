@@ -85,12 +85,19 @@
       color: #64748b;
     }
 
-    /* 關鍵修復：強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode，並避免 iOS Safari 自動放大 */
+    /* 關鍵修復：強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode，並解決 iOS Safari 寬度溢出問題 */
     input[type="time"], input[type="date"], input[type="text"], select {
       color-scheme: dark;
       font-size: 16px !important; /* 防止 iOS 點擊 input 時畫面強制 zoom-in */
       box-sizing: border-box;
       max-width: 100%;
+      width: 100%;
+    }
+
+    /* 針對 iOS Safari 嚴格限制 time input 顯示避免 overflow */
+    input[type="time"] {
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     @media (min-width: 648px) {
@@ -262,7 +269,7 @@
 
   <!-- UNIFIED EDIT/ADD FLIGHT MODAL FORM -->
   <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
-    <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative">
+    <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative overflow-hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-1.5" id="flightFormTitle">
           <i data-lucide="plane-takeoff" class="w-4 h-4 text-sky-400"></i>
@@ -294,17 +301,17 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <div class="min-w-0">
+          <div class="min-w-0 overflow-hidden">
             <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (Departure)</label>
             <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 overflow-hidden">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
             <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
-        <div class="min-w-0">
+        <div class="min-w-0 overflow-hidden">
           <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間</label>
           <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
         </div>
