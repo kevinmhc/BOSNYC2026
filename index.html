@@ -84,6 +84,18 @@
       text-decoration: line-through;
       color: #64748b;
     }
+
+    /* 關鍵修復：強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode，並避免 iOS Safari 自動放大 */
+    input[type="time"], input[type="date"], input[type="text"], select {
+      color-scheme: dark;
+      font-size: 16px !important; /* 防止 iOS 點擊 input 時畫面強制 zoom-in */
+    }
+
+    @media (min-width: 648px) {
+      input[type="time"], input[type="date"], input[type="text"], select {
+        font-size: 14px !important;
+      }
+    }
   </style>
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased min-h-screen">
@@ -247,14 +259,14 @@
   </nav>
 
   <!-- UNIFIED EDIT/ADD FLIGHT MODAL FORM -->
-  <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+  <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-1.5" id="flightFormTitle">
           <i data-lucide="plane-takeoff" class="w-4 h-4 text-sky-400"></i>
           <span>候補航班資料</span>
         </h3>
-        <button onclick="closeFlightForm()" class="p-1 rounded-full text-slate-400 hover:text-white bg-slate-800">
+        <button onclick="closeFlightForm()" class="p-1.5 rounded-full text-slate-400 hover:text-white bg-slate-800 active:scale-95">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -266,38 +278,38 @@
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Airline Code</label>
-            <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 uppercase">
+            <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 uppercase">
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No.</label>
-            <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
         <div>
           <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司名稱 (自動對照)</label>
-          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 focus:outline-none cursor-not-allowed">
+          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-400 focus:outline-none cursor-not-allowed">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">起飛時間 Departure</label>
-            <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (Departure)</label>
+            <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
-            <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">報到 / Standby 時間</label>
-          <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間</label>
+          <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
         </div>
 
         <div id="nycAirportSelectGroup">
           <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Sector)</label>
-          <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 focus:outline-none focus:border-amber-500">
+          <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
             <option value="EWR">EWR (Newark)</option>
             <option value="LGA">LGA (LaGuardia)</option>
             <option value="JFK">JFK (Kennedy)</option>
@@ -759,10 +771,9 @@
       const title = prompt("請輸入新 Sector 航線名稱 (例: BOS - PHL):");
       if (!title) return;
 
-      // Create a native hidden date picker dialog to select date seamlessly
       const dateInput = document.createElement("input");
       dateInput.type = "date";
-      dateInput.value = "2026-10-20"; // Default
+      dateInput.value = "2026-10-20";
       dateInput.style.position = "fixed";
       dateInput.style.opacity = "0";
       document.body.appendChild(dateInput);
@@ -1004,7 +1015,6 @@
     }
 
     function switchView(view) {
-      // Hide all main section views
       document.getElementById('viewTimeline').classList.add('hidden');
       document.getElementById('viewStandby').classList.add('hidden');
       document.getElementById('viewHotels').classList.add('hidden');
@@ -1013,7 +1023,6 @@
       const dayTabs = document.getElementById('dayTabsList');
       const progressText = document.getElementById('tripProgressText');
 
-      // Reset Nav Button Styles
       ['navTimeline', 'navStandby', 'navHotels', 'navChecklist'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
