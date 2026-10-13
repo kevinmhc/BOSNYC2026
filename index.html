@@ -88,6 +88,7 @@
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased min-h-screen">
 
+  <!-- Shared App Header -->
   <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 pt-2 pb-3 px-4">
     <div class="max-w-md mx-auto">
       <div class="flex items-center justify-between mb-2">
@@ -104,163 +105,206 @@
       </div>
 
       <div class="flex items-baseline justify-between">
-        <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+        <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2" id="headerPageTitle">
           <span>🇺🇸 美國之旅 2026</span>
         </h1>
         <span id="tripProgressText" class="text-xs font-medium text-slate-400">Day 1 / 10</span>
       </div>
 
-      <!-- Horizontal Tab Scrollbar for Days -->
+      <!-- Horizontal Tab Scrollbar for Days (Only Visible on Timeline View) -->
       <div class="mt-3 flex space-x-2 overflow-x-auto hide-scrollbar py-1" id="dayTabsList">
         <!-- Dynamic Tabs Injected Here -->
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-md mx-auto w-full px-4 pt-4 pb-20 space-y-4">
+  <main class="flex-1 max-w-md mx-auto w-full px-4 pt-4 pb-24 space-y-4">
 
-    <!-- Day Overview Summary Box -->
-    <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300">
-      <div class="flex justify-between items-start gap-2">
-        <div>
-          <span id="dayBadge" class="text-[11px] font-bold uppercase tracking-wider text-sky-400"></span>
-          <h2 id="dayTitle" class="text-lg font-bold text-white mt-0.5"></h2>
-        </div>
-        <div id="dayLocationBadge" class="px-2.5 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-medium flex items-center gap-1 shrink-0">
-          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span id="dayLocationText">--</span>
-        </div>
-      </div>
-
-      <!-- Hotel Info Bar -->
-      <div id="hotelBar" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-        <div class="flex items-center space-x-2 text-slate-300 truncate">
-          <i data-lucide="bed" class="w-4 h-4 text-amber-400 shrink-0"></i>
-          <span id="hotelText" class="truncate font-medium">--</span>
-        </div>
-        <a id="hotelMapBtn" href="#" target="_blank" class="shrink-0 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-medium flex items-center gap-1">
-          <span>導航</span>
-          <i data-lucide="external-link" class="w-3 h-3"></i>
-        </a>
-      </div>
-    </div>
-
-    <!-- Special Highlight Banner (Anniversary Highlight) -->
-    <div id="highlightBanner" class="hidden glass-card rounded-xl p-3 border-l-4 border-l-rose-500 bg-rose-950/20 flex items-center space-x-3">
-      <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg shrink-0">
-        <i data-lucide="heart" class="w-5 h-5"></i>
-      </div>
-      <div>
-        <p class="text-xs font-bold text-rose-300" id="bannerTitle">Anniversary Highlights 🎉</p>
-        <p class="text-[11px] text-slate-300" id="bannerSubtitle">Battello 晚餐（日落位觀賞曼哈頓夜景）</p>
-      </div>
-    </div>
-
-    <!-- Timeline Section Header -->
-    <div class="flex items-center justify-between px-1 pt-1">
-      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-        <i data-lucide="clock" class="w-3.5 h-3.5 text-sky-400"></i>
-        <span>詳細行程 Timeline</span>
-      </h3>
-      <span class="text-[11px] text-slate-500">點擊地址開啟 Google Maps</span>
-    </div>
-
-    <!-- Dynamic Timeline Container -->
-    <div id="timelineContainer" class="space-y-3">
-      <!-- Dynamic List Injected via JS -->
-    </div>
-
-  </main>
-
-  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-8 py-2">
-    <div class="max-w-md mx-auto flex items-center justify-around">
-      <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
-        <i data-lucide="calendar" class="w-5 h-5"></i>
-        <span class="text-[10px] font-medium">每日行程</span>
-      </button>
-
-      <button onclick="switchView('standby')" id="navStandby" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
-        <i data-lucide="plane-landing" class="w-5 h-5"></i>
-        <span class="text-[10px] font-medium">候補機位</span>
-      </button>
-      
-      <button onclick="switchView('hotels')" id="navHotels" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
-        <i data-lucide="bed" class="w-5 h-5"></i>
-        <span class="text-[10px] font-medium">酒店住宿</span>
-      </button>
-
-      <button onclick="switchView('checklist')" id="navChecklist" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200 relative">
-        <i data-lucide="check-square" class="w-5 h-5"></i>
-        <span class="text-[10px] font-medium">出發備忘</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Dynamic Modal View: Standby Flights Info & Dynamic Editing -->
-  <div id="standbyModal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
-    <div class="max-w-md mx-auto w-full space-y-4 pb-12">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <i data-lucide="plane-takeoff" class="w-5 h-5 text-sky-400"></i>
+    <!-- PAGE VIEW 1: TIMELINE (DEFAULT) -->
+    <section id="viewTimeline" class="space-y-4">
+      <!-- Day Overview Summary Box -->
+      <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300">
+        <div class="flex justify-between items-start gap-2">
           <div>
-            <h2 class="text-base font-bold text-white">候補機位管理 (Standby Sectors)</h2>
-            <p class="text-[10px] text-slate-400">自訂及篩選內陸候補航線與航班</p>
+            <span id="dayBadge" class="text-[11px] font-bold uppercase tracking-wider text-sky-400"></span>
+            <h2 id="dayTitle" class="text-lg font-bold text-white mt-0.5"></h2>
+          </div>
+          <div id="dayLocationBadge" class="px-2.5 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-medium flex items-center gap-1 shrink-0">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span id="dayLocationText">--</span>
           </div>
         </div>
-        <button onclick="closeModal('standbyModal')" class="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+
+        <!-- Hotel Info Bar -->
+        <div id="hotelBar" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+          <div class="flex items-center space-x-2 text-slate-300 truncate">
+            <i data-lucide="bed" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span id="hotelText" class="truncate font-medium">--</span>
+          </div>
+          <a id="hotelMapBtn" href="#" target="_blank" class="shrink-0 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-lg text-[11px] font-medium flex items-center gap-1">
+            <span>導航</span>
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+          </a>
+        </div>
       </div>
 
-      <!-- Add New Sector Button Header -->
-      <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-        <span class="text-xs font-semibold text-slate-300">航線 Sector 列表</span>
-        <button onclick="promptAddSector()" class="px-2.5 py-1 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-bold flex items-center gap-1 active:scale-95 transition">
+      <!-- Special Highlight Banner -->
+      <div id="highlightBanner" class="hidden glass-card rounded-xl p-3 border-l-4 border-l-rose-500 bg-rose-950/20 flex items-center space-x-3">
+        <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg shrink-0">
+          <i data-lucide="heart" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-rose-300" id="bannerTitle">Anniversary Highlights 🎉</p>
+          <p class="text-[11px] text-slate-300" id="bannerSubtitle">Battello 晚餐（日落位觀賞曼哈頓夜景）</p>
+        </div>
+      </div>
+
+      <!-- Timeline Section Header -->
+      <div class="flex items-center justify-between px-1 pt-1">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span>詳細行程 Timeline</span>
+        </h3>
+        <span class="text-[11px] text-slate-500">點擊地址開啟 Google Maps</span>
+      </div>
+
+      <!-- Dynamic Timeline Container -->
+      <div id="timelineContainer" class="space-y-3">
+        <!-- Dynamic List Injected via JS -->
+      </div>
+    </section>
+
+    <!-- PAGE VIEW 2: STANDBY FLIGHTS VIEW -->
+    <section id="viewStandby" class="hidden space-y-4">
+      <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+        <div>
+          <h2 class="text-sm font-bold text-white">候補航線管理</h2>
+          <p class="text-[10px] text-slate-400">各區專屬色彩動態篩選與航班清單</p>
+        </div>
+        <button onclick="promptAddSector()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 active:scale-95 transition shadow-lg shadow-sky-500/20">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           <span>新增 Sector</span>
         </button>
       </div>
 
-      <!-- Sector Tabs / Container -->
       <div id="standbySectorsContainer" class="space-y-4">
         <!-- Injected Dynamically via JS -->
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Modal View: Hotels List -->
-  <div id="hotelsModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
-    <div class="max-w-md mx-auto w-full">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <i data-lucide="bed" class="w-5 h-5 text-amber-400"></i>
-          <span>全程住宿總覽</span>
+    <!-- PAGE VIEW 3: HOTELS VIEW -->
+    <section id="viewHotels" class="hidden space-y-3">
+      <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="bed" class="w-4 h-4 text-amber-400"></i>
+          <span>全程住宿總覽 (Hotels Overview)</span>
         </h2>
-        <button onclick="closeModal('hotelsModal')" class="p-1 rounded-full bg-slate-800 text-slate-400">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <p class="text-[10px] text-slate-400">10 天行程入住飯店地址與導航連結</p>
       </div>
       <div class="space-y-3" id="hotelModalList">
         <!-- Injected via JS -->
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Modal View: Travel Checklist -->
-  <div id="checklistModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl hidden flex-col p-4 overflow-y-auto">
-    <div class="max-w-md mx-auto w-full">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
-          <span>出發備忘 CheckList</span>
+    <!-- PAGE VIEW 4: CHECKLIST VIEW -->
+    <section id="viewChecklist" class="hidden space-y-3">
+      <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+          <span>出發前備忘 Checklist</span>
         </h2>
-        <button onclick="closeModal('checklistModal')" class="p-1 rounded-full bg-slate-800 text-slate-400">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <p class="text-[10px] text-slate-400">重要證件、預約證明與行李確認項</p>
       </div>
       <div class="space-y-2" id="checklistContainer">
         <!-- Dynamic Checklists Injected via JS -->
       </div>
+    </section>
+
+  </main>
+
+  <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-6 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
+        <i data-lucide="calendar" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold">每日行程</span>
+      </button>
+
+      <button onclick="switchView('standby')" id="navStandby" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
+        <i data-lucide="plane-landing" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold">候補機位</span>
+      </button>
+      
+      <button onclick="switchView('hotels')" id="navHotels" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200">
+        <i data-lucide="bed" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold">酒店住宿</span>
+      </button>
+
+      <button onclick="switchView('checklist')" id="navChecklist" class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200 relative">
+        <i data-lucide="check-square" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold">出發備忘</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- UNIFIED EDIT/ADD FLIGHT MODAL FORM -->
+  <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5" id="flightFormTitle">
+          <i data-lucide="plane-takeoff" class="w-4 h-4 text-sky-400"></i>
+          <span>候補航班資料</span>
+        </h3>
+        <button onclick="closeFlightForm()" class="p-1 rounded-full text-slate-400 hover:text-white bg-slate-800">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="flightForm" onsubmit="handleFlightFormSubmit(event)" class="space-y-3">
+        <input type="hidden" id="formSecId">
+        <input type="hidden" id="formFlightId">
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司 Airline</label>
+          <input type="text" id="formAirline" required placeholder="例: Delta Air Lines" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No</label>
+            <input type="text" id="formFlightNo" required placeholder="例: DL2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">起飛時間 Departure</label>
+            <input type="text" id="formDepTime" placeholder="例: 14:30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
+            <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">報到 / Standby 時間</label>
+            <input type="text" id="formCheckinTime" placeholder="例: 12:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          </div>
+        </div>
+
+        <div id="nycAirportSelectGroup">
+          <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Sector)</label>
+          <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 focus:outline-none focus:border-amber-500">
+            <option value="EWR">EWR (Newark)</option>
+            <option value="LGA">LGA (LaGuardia)</option>
+            <option value="JFK">JFK (Kennedy)</option>
+            <option value="ALL">ALL / 其他</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeFlightForm()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-700">取消</button>
+          <button type="submit" class="px-4 py-2 bg-sky-500 text-white rounded-xl text-xs font-bold hover:bg-sky-600 shadow-md shadow-sky-500/20">儲存變更</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -413,6 +457,14 @@
       { id: "c7", text: "信用卡 (外幣簽帳/Apple Pay 設定)", checked: true }
     ];
 
+    /* Dynamic Sector Color Themes */
+    const sectorColorThemes = [
+      { border: "border-sky-500/40", text: "text-sky-400", badgeBg: "bg-sky-500/20", btnBg: "bg-sky-500/10 hover:bg-sky-500/20", activeTab: "bg-sky-500 text-white" },
+      { border: "border-emerald-500/40", text: "text-emerald-400", badgeBg: "bg-emerald-500/20", btnBg: "bg-emerald-500/10 hover:bg-emerald-500/20", activeTab: "bg-emerald-500 text-white" },
+      { border: "border-purple-500/40", text: "text-purple-400", badgeBg: "bg-purple-500/20", btnBg: "bg-purple-500/10 hover:bg-purple-500/20", activeTab: "bg-purple-500 text-white" },
+      { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
+    ];
+
     /* Dynamic Standby Sectors & Flights Data Structure */
     let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
       {
@@ -460,8 +512,9 @@
       container.innerHTML = '';
 
       standbyData.forEach((sec, secIdx) => {
+        const theme = sectorColorThemes[secIdx % sectorColorThemes.length];
         const secCard = document.createElement('div');
-        secCard.className = "glass-card rounded-2xl p-4 border border-slate-800 space-y-3";
+        secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} space-y-3 transition-all`;
 
         // Filter flights if NYC sector
         let displayedFlights = sec.flights;
@@ -472,8 +525,8 @@
         secCard.innerHTML = `
           <!-- Sector Title & Operations -->
           <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <h3 class="text-sm font-extrabold text-sky-400 flex items-center gap-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+            <h3 class="text-sm font-extrabold ${theme.text} flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 ${theme.text}"></i>
               <span>${sec.title}</span>
             </h3>
             <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1 rounded-lg text-xs flex items-center gap-0.5">
@@ -490,7 +543,7 @@
                   <button onclick="setNycFilter('${sec.id}', '${apt}')" 
                     class="px-2.5 py-0.5 rounded-full text-[10px] font-bold transition ${
                       sec.nycFilter === apt 
-                        ? 'bg-sky-500 text-white pulse-glow' 
+                        ? `${theme.activeTab} pulse-glow` 
                         : 'bg-slate-800/80 text-slate-400 hover:bg-slate-700'
                     }">
                     ${apt}
@@ -507,17 +560,17 @@
                 暫無符合條件的候補航班
               </div>
             ` : displayedFlights.map(f => `
-              <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5">
+              <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
                 <div class="flex justify-between items-start">
                   <div>
                     <div class="flex items-center gap-1.5">
                       <span class="text-xs font-extrabold text-white">${f.airline}</span>
-                      <span class="text-xs font-bold text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded border border-sky-500/20">${f.flightNo}</span>
+                      <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${f.flightNo}</span>
                       ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
                     </div>
                   </div>
                   <div class="flex items-center gap-1">
-                    <button onclick="editFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
+                    <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
                       <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-rose-400">
@@ -527,7 +580,7 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
-                  <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime}</strong></div>
+                  <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime || '--'}</strong></div>
                   <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal || '--'}</strong></div>
                   <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
                 </div>
@@ -536,7 +589,7 @@
           </div>
 
           <!-- Add Flight to Sector Button -->
-          <button onclick="promptAddFlight('${sec.id}')" class="w-full py-1.5 bg-slate-800/80 hover:bg-slate-800 text-sky-400 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+          <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-1.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
             <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
             <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
           </button>
@@ -546,6 +599,78 @@
       });
 
       lucide.createIcons();
+    }
+
+    /* Single Form Modal Logic */
+    function openFlightForm(secId, flightId = null) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+
+      document.getElementById('formSecId').value = secId;
+      document.getElementById('formFlightId').value = flightId || '';
+
+      const nycGroup = document.getElementById('nycAirportSelectGroup');
+      if (sec.isNyc) {
+        nycGroup.classList.remove('hidden');
+      } else {
+        nycGroup.classList.add('hidden');
+      }
+
+      if (flightId) {
+        const flight = sec.flights.find(f => f.id === flightId);
+        if (flight) {
+          document.getElementById('flightFormTitle').innerText = '編輯航班資料';
+          document.getElementById('formAirline').value = flight.airline || '';
+          document.getElementById('formFlightNo').value = flight.flightNo || '';
+          document.getElementById('formDepTime').value = flight.depTime || '';
+          document.getElementById('formTerminal').value = flight.terminal || '';
+          document.getElementById('formCheckinTime').value = flight.checkinTime || '';
+          document.getElementById('formApt').value = flight.apt || 'EWR';
+        }
+      } else {
+        document.getElementById('flightFormTitle').innerText = '新增候補航班';
+        document.getElementById('flightForm').reset();
+        document.getElementById('formSecId').value = secId;
+        document.getElementById('formFlightId').value = '';
+      }
+
+      document.getElementById('flightFormModal').classList.remove('hidden');
+      document.getElementById('flightFormModal').classList.add('flex');
+    }
+
+    function closeFlightForm() {
+      const modal = document.getElementById('flightFormModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleFlightFormSubmit(e) {
+      e.preventDefault();
+      const secId = document.getElementById('formSecId').value;
+      const flightId = document.getElementById('formFlightId').value;
+
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+
+      const flightData = {
+        id: flightId || ("f-" + Date.now()),
+        airline: document.getElementById('formAirline').value,
+        flightNo: document.getElementById('formFlightNo').value,
+        depTime: document.getElementById('formDepTime').value,
+        terminal: document.getElementById('formTerminal').value,
+        checkinTime: document.getElementById('formCheckinTime').value,
+        apt: sec.isNyc ? document.getElementById('formApt').value : 'ALL'
+      };
+
+      if (flightId) {
+        const idx = sec.flights.findIndex(f => f.id === flightId);
+        if (idx !== -1) sec.flights[idx] = flightData;
+      } else {
+        sec.flights.push(flightData);
+      }
+
+      closeFlightForm();
+      saveStandbyData();
     }
 
     function promptAddSector() {
@@ -576,63 +701,6 @@
         sec.nycFilter = filter;
         renderStandbyView();
       }
-    }
-
-    function promptAddFlight(secId) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-
-      const airline = prompt("航空公司 (例: Delta Air Lines):", "Delta Air Lines");
-      if (!airline) return;
-      const flightNo = prompt("航班編號 (例: DL1234):", "DL");
-      const depTime = prompt("起飛時間 (例: 14:30):", "12:00");
-      const terminal = prompt("Terminal (例: Terminal B / T1):", "T1");
-      const checkinTime = prompt("報到 / Standby 時間 (例: 10:30):", "10:00");
-      
-      let apt = "ALL";
-      if (sec.isNyc) {
-        apt = (prompt("機場代碼 (EWR / LGA / JFK):", "EWR") || "EWR").toUpperCase();
-      }
-
-      sec.flights.push({
-        id: "f-" + Date.now(),
-        airline,
-        flightNo,
-        depTime,
-        terminal,
-        checkinTime,
-        apt
-      });
-
-      saveStandbyData();
-    }
-
-    function editFlight(secId, flightId) {
-      const sec = standbyData.find(s => s.id === secId);
-      if (!sec) return;
-      const flight = sec.flights.find(f => f.id === flightId);
-      if (!flight) return;
-
-      const airline = prompt("修改 航空公司:", flight.airline);
-      if (!airline) return;
-      const flightNo = prompt("修改 航班編號:", flight.flightNo);
-      const depTime = prompt("修改 起飛時間:", flight.depTime);
-      const terminal = prompt("修改 Terminal:", flight.terminal);
-      const checkinTime = prompt("修改 報到/Standby時間:", flight.checkinTime);
-      
-      let apt = flight.apt;
-      if (sec.isNyc) {
-        apt = (prompt("修改 機場代碼 (EWR / LGA / JFK):", flight.apt) || flight.apt).toUpperCase();
-      }
-
-      flight.airline = airline;
-      flight.flightNo = flightNo;
-      flight.depTime = depTime;
-      flight.terminal = terminal;
-      flight.checkinTime = checkinTime;
-      flight.apt = apt;
-
-      saveStandbyData();
     }
 
     function deleteFlight(secId, flightId) {
@@ -741,6 +809,7 @@
     }
 
     function jumpToToday() {
+      switchView('timeline');
       selectDay(0);
     }
 
@@ -794,20 +863,17 @@
       lucide.createIcons();
     }
 
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-    }
-
     function switchView(view) {
-      closeModal('hotelsModal');
-      closeModal('checklistModal');
-      closeModal('standbyModal');
+      // Hide all main section views
+      document.getElementById('viewTimeline').classList.add('hidden');
+      document.getElementById('viewStandby').classList.add('hidden');
+      document.getElementById('viewHotels').classList.add('hidden');
+      document.getElementById('viewChecklist').classList.add('hidden');
 
-      // Update Nav Bar Active Colors
+      const dayTabs = document.getElementById('dayTabsList');
+      const progressText = document.getElementById('tripProgressText');
+
+      // Reset Nav Button Styles
       ['navTimeline', 'navStandby', 'navHotels', 'navChecklist'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -815,21 +881,31 @@
         }
       });
 
-      if (view === 'hotels') {
-        document.getElementById('hotelsModal').classList.remove('hidden');
-        document.getElementById('hotelsModal').classList.add('flex');
-        document.getElementById('navHotels').className = "flex flex-col items-center space-y-1 text-sky-400";
-      } else if (view === 'checklist') {
-        document.getElementById('checklistModal').classList.remove('hidden');
-        document.getElementById('checklistModal').classList.add('flex');
-        document.getElementById('navChecklist').className = "flex flex-col items-center space-y-1 text-sky-400";
-      } else if (view === 'standby') {
-        document.getElementById('standbyModal').classList.remove('hidden');
-        document.getElementById('standbyModal').classList.add('flex');
+      if (view === 'standby') {
+        document.getElementById('viewStandby').classList.remove('hidden');
         document.getElementById('navStandby').className = "flex flex-col items-center space-y-1 text-sky-400";
+        document.getElementById('headerPageTitle').innerHTML = '<span>候補機位 Standby</span>';
+        dayTabs.classList.add('hidden');
+        progressText.classList.add('hidden');
         renderStandbyView();
+      } else if (view === 'hotels') {
+        document.getElementById('viewHotels').classList.remove('hidden');
+        document.getElementById('navHotels').className = "flex flex-col items-center space-y-1 text-sky-400";
+        document.getElementById('headerPageTitle').innerHTML = '<span>酒店住宿 Hotels</span>';
+        dayTabs.classList.add('hidden');
+        progressText.classList.add('hidden');
+      } else if (view === 'checklist') {
+        document.getElementById('viewChecklist').classList.remove('hidden');
+        document.getElementById('navChecklist').className = "flex flex-col items-center space-y-1 text-sky-400";
+        document.getElementById('headerPageTitle').innerHTML = '<span>出發備忘 Checklist</span>';
+        dayTabs.classList.add('hidden');
+        progressText.classList.add('hidden');
       } else {
+        document.getElementById('viewTimeline').classList.remove('hidden');
         document.getElementById('navTimeline').className = "flex flex-col items-center space-y-1 text-sky-400";
+        document.getElementById('headerPageTitle').innerHTML = '<span>🇺🇸 美國之旅 2026</span>';
+        dayTabs.classList.remove('hidden');
+        progressText.classList.remove('hidden');
       }
     }
   </script>
