@@ -472,6 +472,7 @@
         title: "YYZ - BOS (多倫多 → 波士頓)",
         isNyc: false,
         nycFilter: "ALL",
+        isExpanded: false,
         flights: [
           { id: "f1", airline: "Air Canada", flightNo: "AC8800", depTime: "11:15", terminal: "T1", checkinTime: "09:30", apt: "YYZ" },
           { id: "f2", airline: "Air Canada", flightNo: "AC8804", depTime: "16:20", terminal: "T1", checkinTime: "14:30", apt: "YYZ" }
@@ -482,6 +483,7 @@
         title: "BOS - NYC (波士頓 → 紐約區)",
         isNyc: true,
         nycFilter: "ALL",
+        isExpanded: false,
         flights: [
           { id: "f3", airline: "Delta Air Lines", flightNo: "DL2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "07:15", apt: "LGA" },
           { id: "f4", airline: "American Airlines", flightNo: "AA2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:45", apt: "EWR" },
@@ -493,6 +495,7 @@
         title: "NYC - BOS (紐約區 → 波士頓)",
         isNyc: true,
         nycFilter: "ALL",
+        isExpanded: false,
         flights: [
           { id: "f6", airline: "United Airlines", flightNo: "UA3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "08:00", apt: "EWR" },
           { id: "f7", airline: "Delta Air Lines", flightNo: "DL2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "13:00", apt: "LGA" },
@@ -500,6 +503,14 @@
         ]
       }
     ];
+
+    function toggleSectorExpand(secId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (sec) {
+        sec.isExpanded = !sec.isExpanded;
+        saveStandbyData();
+      }
+    }
 
     function saveStandbyData() {
       localStorage.setItem('us_trip_standby_data', JSON.stringify(standbyData));
@@ -514,7 +525,7 @@
       standbyData.forEach((sec, secIdx) => {
         const theme = sectorColorThemes[secIdx % sectorColorThemes.length];
         const secCard = document.createElement('div');
-        secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} space-y-3 transition-all`;
+        secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} transition-all`;
 
         // Filter flights if NYC sector
         let displayedFlights = sec.flights;
@@ -522,77 +533,93 @@
           displayedFlights = sec.flights.filter(f => f.apt === sec.nycFilter);
         }
 
+        const isExpanded = sec.isExpanded ?? false;
+
         secCard.innerHTML = `
-          <!-- Sector Title & Operations -->
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-            <h3 class="text-sm font-extrabold ${theme.text} flex items-center gap-1.5">
-              <i data-lucide="map-pin" class="w-4 h-4 ${theme.text}"></i>
-              <span>${sec.title}</span>
-            </h3>
-            <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1 rounded-lg text-xs flex items-center gap-0.5">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
+          <!-- Sector Title Bar (Clickable Accordion Header) -->
+          <div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleSectorExpand('${sec.id}')">
+            <div class="flex items-center gap-2">
+              <i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4 ${theme.text} transition-transform"></i>
+              <h3 class="text-sm font-extrabold ${theme.text} flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-4 h-4 ${theme.text}"></i>
+                <span>${sec.title}</span>
+              </h3>
+              <span class="text-[10px] font-bold ${theme.badgeBg} ${theme.text} px-2 py-0.5 rounded-full border ${theme.border}">
+                ${sec.flights.length} 班航班
+              </span>
+            </div>
+
+            <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+              <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-rose-500/10">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
 
-          <!-- NYC Airport Filter Bar (Only if NYC) -->
-          ${sec.isNyc ? `
-            <div class="flex items-center gap-1.5 pt-1">
-              <span class="text-[10px] font-bold text-slate-400 shrink-0">機場 Filter:</span>
-              <div class="flex gap-1 overflow-x-auto hide-scrollbar">
-                ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
-                  <button onclick="setNycFilter('${sec.id}', '${apt}')" 
-                    class="px-2.5 py-0.5 rounded-full text-[10px] font-bold transition ${
-                      sec.nycFilter === apt 
-                        ? `${theme.activeTab} pulse-glow` 
-                        : 'bg-slate-800/80 text-slate-400 hover:bg-slate-700'
-                    }">
-                    ${apt}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
+          <!-- Collapsible Body Content -->
+          ${isExpanded ? `
+            <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-3">
+              <!-- NYC Airport Filter Bar (Only if NYC) -->
+              ${sec.isNyc ? `
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-bold text-slate-400 shrink-0">機場 Filter:</span>
+                  <div class="flex gap-1 overflow-x-auto hide-scrollbar">
+                    ${['ALL', 'EWR', 'LGA', 'JFK'].map(apt => `
+                      <button onclick="setNycFilter('${sec.id}', '${apt}')" 
+                        class="px-2.5 py-0.5 rounded-full text-[10px] font-bold transition ${
+                          sec.nycFilter === apt 
+                            ? `${theme.activeTab} pulse-glow` 
+                            : 'bg-slate-800/80 text-slate-400 hover:bg-slate-700'
+                        }">
+                        ${apt}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
 
-          <!-- Flights List -->
-          <div class="space-y-2 pt-1">
-            ${displayedFlights.length === 0 ? `
-              <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
-                暫無符合條件的候補航班
-              </div>
-            ` : displayedFlights.map(f => `
-              <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-xs font-extrabold text-white">${f.airline}</span>
-                      <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${f.flightNo}</span>
-                      ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
+              <!-- Flights List -->
+              <div class="space-y-2">
+                ${displayedFlights.length === 0 ? `
+                  <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+                    暫無符合條件的候補航班
+                  </div>
+                ` : displayedFlights.map(f => `
+                  <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-xs font-extrabold text-white">${f.airline}</span>
+                          <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${f.flightNo}</span>
+                          ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
+                          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-rose-400">
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
+                      <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime || '--'}</strong></div>
+                      <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal || '--'}</strong></div>
+                      <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-1">
-                    <button onclick="openFlightForm('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-sky-300">
-                      <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                    </button>
-                    <button onclick="deleteFlight('${sec.id}', '${f.id}')" class="p-1 text-slate-400 hover:text-rose-400">
-                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 text-[11px] pt-1 border-t border-slate-800/60 text-slate-300">
-                  <div><span class="text-slate-500 block text-[9px]">起飛時間</span><strong class="text-white">${f.depTime || '--'}</strong></div>
-                  <div><span class="text-slate-500 block text-[9px]">Terminal</span><strong class="text-slate-200">${f.terminal || '--'}</strong></div>
-                  <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
-                </div>
+                `).join('')}
               </div>
-            `).join('')}
-          </div>
 
-          <!-- Add Flight to Sector Button -->
-          <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-1.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-            <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
-          </button>
+              <!-- Add Flight to Sector Button -->
+              <button onclick="openFlightForm('${sec.id}', null)" class="w-full py-1.5 ${theme.btnBg} ${theme.text} border ${theme.border} rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>新增 ${sec.title.split(' ')[0]} 候補航班</span>
+              </button>
+            </div>
+          ` : ''}
         `;
 
         container.appendChild(secCard);
