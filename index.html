@@ -282,7 +282,7 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">起飛時間 Departure</label>
-            <input type="text" id="formDepTime" placeholder="例: 14:30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+            <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
@@ -292,7 +292,7 @@
 
         <div>
           <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">報到 / Standby 時間</label>
-          <input type="text" id="formCheckinTime" placeholder="例: 12:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
         </div>
 
         <div id="nycAirportSelectGroup">
@@ -469,6 +469,20 @@
       { border: "border-purple-500/40", text: "text-purple-400", badgeBg: "bg-purple-500/20", btnBg: "bg-purple-500/10 hover:bg-purple-500/20", activeTab: "bg-purple-500 text-white" },
       { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
     ];
+
+    /* Helper function to convert YYYY-MM-DD or standard date string to formatted date (MM/DD (週日)) */
+    function formatDateWithWeekday(dateStr) {
+      if (!dateStr) return "";
+      if (dateStr.includes("(") && dateStr.includes(")")) return dateStr; // Already formatted
+      const parsed = new Date(dateStr);
+      if (isNaN(parsed.getTime())) return dateStr;
+      
+      const month = String(parsed.getMonth() + 1).padStart(2, '0');
+      const day = String(parsed.getDate()).padStart(2, '0');
+      const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+      const weekday = weekdays[parsed.getDay()];
+      return `${month}/${day} (${weekday})`;
+    }
 
     /* Airline Code Mapping */
     const airlineMapping = {
@@ -744,28 +758,73 @@
     function promptAddSector() {
       const title = prompt("請輸入新 Sector 航線名稱 (例: BOS - PHL):");
       if (!title) return;
-      const date = prompt("請輸入該 Sector 日期 (例: 10/20 (二)):", "10/20 (二)");
-      const isNyc = title.toUpperCase().includes("NYC") || title.toUpperCase().includes("EWR") || title.toUpperCase().includes("LGA") || title.toUpperCase().includes("JFK");
-      
-      standbyData.push({
-        id: "sec-" + Date.now(),
-        title: title,
-        date: date || "",
-        isNyc: isNyc,
-        nycFilter: "ALL",
-        isExpanded: true,
-        flights: []
-      });
-      saveStandbyData();
+
+      // Create a native hidden date picker dialog to select date seamlessly
+      const dateInput = document.createElement("input");
+      dateInput.type = "date";
+      dateInput.value = "2026-10-20"; // Default
+      dateInput.style.position = "fixed";
+      dateInput.style.opacity = "0";
+      document.body.appendChild(dateInput);
+
+      dateInput.onchange = function() {
+        const formattedDate = formatDateWithWeekday(dateInput.value);
+        const isNyc = title.toUpperCase().includes("NYC") || title.toUpperCase().includes("EWR") || title.toUpperCase().includes("LGA") || title.toUpperCase().includes("JFK");
+        
+        standbyData.push({
+          id: "sec-" + Date.now(),
+          title: title,
+          date: formattedDate,
+          isNyc: isNyc,
+          nycFilter: "ALL",
+          isExpanded: true,
+          flights: []
+        });
+        saveStandbyData();
+        document.body.removeChild(dateInput);
+      };
+
+      dateInput.onblur = function() {
+        if (document.body.contains(dateInput)) {
+          document.body.removeChild(dateInput);
+        }
+      };
+
+      if (typeof dateInput.showPicker === "function") {
+        dateInput.showPicker();
+      } else {
+        dateInput.click();
+      }
     }
 
     function editSectorDate(secId) {
       const sec = standbyData.find(s => s.id === secId);
       if (!sec) return;
-      const newDate = prompt("請輸入 Sector 新日期:", sec.date || "");
-      if (newDate !== null) {
-        sec.date = newDate;
-        saveStandbyData();
+
+      const dateInput = document.createElement("input");
+      dateInput.type = "date";
+      dateInput.style.position = "fixed";
+      dateInput.style.opacity = "0";
+      document.body.appendChild(dateInput);
+
+      dateInput.onchange = function() {
+        if (dateInput.value) {
+          sec.date = formatDateWithWeekday(dateInput.value);
+          saveStandbyData();
+        }
+        document.body.removeChild(dateInput);
+      };
+
+      dateInput.onblur = function() {
+        if (document.body.contains(dateInput)) {
+          document.body.removeChild(dateInput);
+        }
+      };
+
+      if (typeof dateInput.showPicker === "function") {
+        dateInput.showPicker();
+      } else {
+        dateInput.click();
       }
     }
 
