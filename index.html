@@ -263,31 +263,36 @@
         <input type="hidden" id="formSecId">
         <input type="hidden" id="formFlightId">
 
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Airline Code</label>
+            <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 uppercase">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No.</label>
+            <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          </div>
+        </div>
+
         <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司 Airline</label>
-          <input type="text" id="formAirline" required placeholder="例: Delta Air Lines" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司名稱 (自動對照)</label>
+          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 focus:outline-none cursor-not-allowed">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No</label>
-            <input type="text" id="formFlightNo" required placeholder="例: DL2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-          </div>
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">起飛時間 Departure</label>
             <input type="text" id="formDepTime" placeholder="例: 14:30" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
           </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
             <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
           </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">報到 / Standby 時間</label>
-            <input type="text" id="formCheckinTime" placeholder="例: 12:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
-          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">報到 / Standby 時間</label>
+          <input type="text" id="formCheckinTime" placeholder="例: 12:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
         </div>
 
         <div id="nycAirportSelectGroup">
@@ -465,41 +470,63 @@
       { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
     ];
 
+    /* Airline Code Mapping */
+    const airlineMapping = {
+      "AA": "American Airlines",
+      "UA": "United Airlines",
+      "DL": "Delta Air Lines",
+      "B6": "Jet Blue",
+      "AS": "Alaska Airlines",
+      "PD": "Porter Airlines",
+      "AC": "Air Canada"
+    };
+
+    function autoLookupAirline() {
+      const codeInput = document.getElementById('formAirlineCode');
+      const nameInput = document.getElementById('formAirlineName');
+      if (!codeInput || !nameInput) return;
+      const code = codeInput.value.trim().toUpperCase();
+      nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
+    }
+
     /* Dynamic Standby Sectors & Flights Data Structure */
     let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
       {
         id: "sec-1",
         title: "YYZ - BOS (多倫多 → 波士頓)",
+        date: "10/17 (六)",
         isNyc: false,
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f1", airline: "Air Canada", flightNo: "AC8800", depTime: "11:15", terminal: "T1", checkinTime: "09:30", apt: "YYZ" },
-          { id: "f2", airline: "Air Canada", flightNo: "AC8804", depTime: "16:20", terminal: "T1", checkinTime: "14:30", apt: "YYZ" }
+          { id: "f1", airlineCode: "AC", flightNo: "8800", depTime: "11:15", terminal: "T1", checkinTime: "09:30", apt: "YYZ" },
+          { id: "f2", airlineCode: "AC", flightNo: "8804", depTime: "16:20", terminal: "T1", checkinTime: "14:30", apt: "YYZ" }
         ]
       },
       {
         id: "sec-2",
         title: "BOS - NYC (波士頓 → 紐約區)",
+        date: "10/19 (一)",
         isNyc: true,
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f3", airline: "Delta Air Lines", flightNo: "DL2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "07:15", apt: "LGA" },
-          { id: "f4", airline: "American Airlines", flightNo: "AA2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:45", apt: "EWR" },
-          { id: "f5", airline: "JetBlue", flightNo: "B6481", depTime: "17:45", terminal: "Terminal C", checkinTime: "16:15", apt: "JFK" }
+          { id: "f3", airlineCode: "DL", flightNo: "2145", depTime: "08:30", terminal: "Terminal A", checkinTime: "07:15", apt: "LGA" },
+          { id: "f4", airlineCode: "AA", flightNo: "2310", depTime: "12:00", terminal: "Terminal B", checkinTime: "10:45", apt: "EWR" },
+          { id: "f5", airlineCode: "B6", flightNo: "481", depTime: "17:45", terminal: "Terminal C", checkinTime: "16:15", apt: "JFK" }
         ]
       },
       {
         id: "sec-3",
         title: "NYC - BOS (紐約區 → 波士頓)",
+        date: "10/24 (六)",
         isNyc: true,
         nycFilter: "ALL",
         isExpanded: false,
         flights: [
-          { id: "f6", airline: "United Airlines", flightNo: "UA3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "08:00", apt: "EWR" },
-          { id: "f7", airline: "Delta Air Lines", flightNo: "DL2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "13:00", apt: "LGA" },
-          { id: "f8", airline: "American Airlines", flightNo: "AA1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:30", apt: "JFK" }
+          { id: "f6", airlineCode: "UA", flightNo: "3502", depTime: "09:15", terminal: "Terminal C", checkinTime: "08:00", apt: "EWR" },
+          { id: "f7", airlineCode: "DL", flightNo: "2780", depTime: "14:20", terminal: "Terminal C", checkinTime: "13:00", apt: "LGA" },
+          { id: "f8", airlineCode: "AA", flightNo: "1892", depTime: "19:00", terminal: "Terminal 8", checkinTime: "17:30", apt: "JFK" }
         ]
       }
     ];
@@ -538,18 +565,22 @@
         secCard.innerHTML = `
           <!-- Sector Title Bar (Clickable Accordion Header) -->
           <div class="flex items-center justify-between cursor-pointer select-none" onclick="toggleSectorExpand('${sec.id}')">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" class="w-4 h-4 ${theme.text} transition-transform"></i>
               <h3 class="text-sm font-extrabold ${theme.text} flex items-center gap-1.5">
                 <i data-lucide="map-pin" class="w-4 h-4 ${theme.text}"></i>
                 <span>${sec.title}</span>
               </h3>
+              ${sec.date ? `<span class="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">${sec.date}</span>` : ''}
               <span class="text-[10px] font-bold ${theme.badgeBg} ${theme.text} px-2 py-0.5 rounded-full border ${theme.border}">
                 ${sec.flights.length} 班航班
               </span>
             </div>
 
             <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+              <button onclick="editSectorDate('${sec.id}')" title="修改日期" class="text-slate-400 hover:text-sky-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-slate-800">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              </button>
               <button onclick="deleteSector('${sec.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg text-xs flex items-center gap-0.5 hover:bg-rose-500/10">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
@@ -584,13 +615,18 @@
                   <div class="p-3 text-center text-xs text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
                     暫無符合條件的候補航班
                   </div>
-                ` : displayedFlights.map(f => `
+                ` : displayedFlights.map(f => {
+                  const code = (f.airlineCode || '').toUpperCase();
+                  const airlineFullName = airlineMapping[code] || f.airline || '未知航空公司';
+                  const fullFlightNo = `${code}${f.flightNo || ''}`;
+
+                  return `
                   <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col gap-1.5 hover:border-slate-700 transition">
                     <div class="flex justify-between items-start">
                       <div>
                         <div class="flex items-center gap-1.5">
-                          <span class="text-xs font-extrabold text-white">${f.airline}</span>
-                          <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${f.flightNo}</span>
+                          <span class="text-xs font-extrabold text-white">${airlineFullName}</span>
+                          <span class="text-xs font-bold ${theme.text} ${theme.badgeBg} px-1.5 py-0.5 rounded border ${theme.border}">${fullFlightNo}</span>
                           ${sec.isNyc ? `<span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">${f.apt}</span>` : ''}
                         </div>
                       </div>
@@ -610,7 +646,8 @@
                       <div><span class="text-slate-500 block text-[9px]">報到/Standby</span><strong class="text-amber-300">${f.checkinTime || '--'}</strong></div>
                     </div>
                   </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
 
               <!-- Add Flight to Sector Button -->
@@ -647,18 +684,20 @@
         const flight = sec.flights.find(f => f.id === flightId);
         if (flight) {
           document.getElementById('flightFormTitle').innerText = '編輯航班資料';
-          document.getElementById('formAirline').value = flight.airline || '';
+          document.getElementById('formAirlineCode').value = flight.airlineCode || '';
           document.getElementById('formFlightNo').value = flight.flightNo || '';
           document.getElementById('formDepTime').value = flight.depTime || '';
           document.getElementById('formTerminal').value = flight.terminal || '';
           document.getElementById('formCheckinTime').value = flight.checkinTime || '';
           document.getElementById('formApt').value = flight.apt || 'EWR';
+          autoLookupAirline();
         }
       } else {
         document.getElementById('flightFormTitle').innerText = '新增候補航班';
         document.getElementById('flightForm').reset();
         document.getElementById('formSecId').value = secId;
         document.getElementById('formFlightId').value = '';
+        document.getElementById('formAirlineName').value = '';
       }
 
       document.getElementById('flightFormModal').classList.remove('hidden');
@@ -679,10 +718,12 @@
       const sec = standbyData.find(s => s.id === secId);
       if (!sec) return;
 
+      const code = document.getElementById('formAirlineCode').value.trim().toUpperCase();
       const flightData = {
         id: flightId || ("f-" + Date.now()),
-        airline: document.getElementById('formAirline').value,
-        flightNo: document.getElementById('formFlightNo').value,
+        airlineCode: code,
+        airline: airlineMapping[code] || "其他航空公司",
+        flightNo: document.getElementById('formFlightNo').value.trim(),
         depTime: document.getElementById('formDepTime').value,
         terminal: document.getElementById('formTerminal').value,
         checkinTime: document.getElementById('formCheckinTime').value,
@@ -703,16 +744,29 @@
     function promptAddSector() {
       const title = prompt("請輸入新 Sector 航線名稱 (例: BOS - PHL):");
       if (!title) return;
+      const date = prompt("請輸入該 Sector 日期 (例: 10/20 (二)):", "10/20 (二)");
       const isNyc = title.toUpperCase().includes("NYC") || title.toUpperCase().includes("EWR") || title.toUpperCase().includes("LGA") || title.toUpperCase().includes("JFK");
       
       standbyData.push({
         id: "sec-" + Date.now(),
         title: title,
+        date: date || "",
         isNyc: isNyc,
         nycFilter: "ALL",
+        isExpanded: true,
         flights: []
       });
       saveStandbyData();
+    }
+
+    function editSectorDate(secId) {
+      const sec = standbyData.find(s => s.id === secId);
+      if (!sec) return;
+      const newDate = prompt("請輸入 Sector 新日期:", sec.date || "");
+      if (newDate !== null) {
+        sec.date = newDate;
+        saveStandbyData();
+      }
     }
 
     function deleteSector(secId) {
