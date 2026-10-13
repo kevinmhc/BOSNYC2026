@@ -89,6 +89,8 @@
     input[type="time"], input[type="date"], input[type="text"], select {
       color-scheme: dark;
       font-size: 16px !important; /* 防止 iOS 點擊 input 時畫面強制 zoom-in */
+      box-sizing: border-box;
+      max-width: 100%;
     }
 
     @media (min-width: 648px) {
@@ -276,38 +278,38 @@
         <input type="hidden" id="formFlightId">
 
         <div class="grid grid-cols-3 gap-2">
-          <div>
+          <div class="min-w-0">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Airline Code</label>
             <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 uppercase">
           </div>
-          <div class="col-span-2">
+          <div class="col-span-2 min-w-0">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航班號 Flight No.</label>
             <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
-        <div>
+        <div class="min-w-0">
           <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">航空公司名稱 (自動對照)</label>
           <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-400 focus:outline-none cursor-not-allowed">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <div>
+          <div class="min-w-0">
             <label class="block text-[10px] font-bold text-sky-400 uppercase mb-1">起飛時間 (Departure)</label>
             <input type="time" id="formDepTime" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
           </div>
-          <div>
+          <div class="min-w-0">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Terminal</label>
             <input type="text" id="formTerminal" placeholder="例: Terminal B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
           </div>
         </div>
 
-        <div>
+        <div class="min-w-0">
           <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間</label>
           <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
         </div>
 
-        <div id="nycAirportSelectGroup">
+        <div id="nycAirportSelectGroup" class="min-w-0">
           <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Sector)</label>
           <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
             <option value="EWR">EWR (Newark)</option>
