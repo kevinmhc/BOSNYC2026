@@ -43,7 +43,7 @@
   </script>
 
   <style>
-    /* iOS PWA iPhone 14 Pro Safe Areas & Ergonomic Layout */
+    /* iOS PWA Safe Areas & Mobile Optimizations */
     body {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -61,7 +61,7 @@
       scrollbar-width: none;
     }
 
-    /* Modern Dark Dynamic Glassmorphism */
+    /* Dark Dynamic Glassmorphism */
     .glass-card {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(16px);
@@ -85,7 +85,7 @@
       color: #64748b;
     }
 
-    /* 強制所有輸入框與原生 Time/Date 選擇器完美適配 Dark Mode */
+    /* iOS Dark Mode Inputs fix */
     input[type="time"], input[type="date"], input[type="text"], select {
       color-scheme: dark;
       font-size: 16px !important;
@@ -108,7 +108,6 @@
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased min-h-screen">
 
-  <!-- Shared App Header -->
   <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 pt-2 pb-3 px-4">
     <div class="max-w-md mx-auto">
       <div class="flex items-center justify-between mb-2">
@@ -131,18 +130,17 @@
         <span id="tripProgressText" class="text-xs font-medium text-slate-400">Day 1 / 10</span>
       </div>
 
-      <!-- Horizontal Tab Scrollbar for Days (Only Visible on Timeline View) -->
+      <!-- Days Scrollbar Header -->
       <div class="mt-3 flex space-x-2 overflow-x-auto hide-scrollbar py-1" id="dayTabsList">
-        <!-- Dynamic Tabs Injected Here -->
+        <!-- Dynamic Tabs -->
       </div>
     </div>
   </header>
 
   <main class="flex-1 max-w-md mx-auto w-full px-4 pt-4 pb-24 space-y-4">
 
-    <!-- PAGE VIEW 1: TIMELINE (DEFAULT) -->
+    <!-- VIEW 1: TIMELINE -->
     <section id="viewTimeline" class="space-y-4">
-      <!-- Day Overview Summary Box -->
       <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300">
         <div class="flex justify-between items-start gap-2">
           <div>
@@ -155,7 +153,6 @@
           </div>
         </div>
 
-        <!-- Hotel Info Bar -->
         <div id="hotelBar" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
           <div class="flex items-center space-x-2 text-slate-300 truncate">
             <i data-lucide="bed" class="w-4 h-4 text-amber-400 shrink-0"></i>
@@ -168,7 +165,6 @@
         </div>
       </div>
 
-      <!-- Special Highlight Banner -->
       <div id="highlightBanner" class="hidden glass-card rounded-xl p-3 border-l-4 border-l-rose-500 bg-rose-950/20 flex items-center space-x-3">
         <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg shrink-0">
           <i data-lucide="heart" class="w-5 h-5"></i>
@@ -179,7 +175,6 @@
         </div>
       </div>
 
-      <!-- Timeline Section Header -->
       <div class="flex items-center justify-between px-1 pt-1">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
           <i data-lucide="clock" class="w-3.5 h-3.5 text-sky-400"></i>
@@ -188,13 +183,12 @@
         <span class="text-[11px] text-slate-500">點擊地址開啟 Google Maps</span>
       </div>
 
-      <!-- Dynamic Timeline Container -->
       <div id="timelineContainer" class="space-y-3">
-        <!-- Dynamic List Injected via JS -->
+        <!-- Injected via JS -->
       </div>
     </section>
 
-    <!-- PAGE VIEW 2: STANDBY FLIGHTS VIEW -->
+    <!-- VIEW 2: STANDBY FLIGHTS -->
     <section id="viewStandby" class="hidden space-y-4">
       <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <div>
@@ -208,11 +202,11 @@
       </div>
 
       <div id="standbySectorsContainer" class="space-y-4">
-        <!-- Injected Dynamically via JS -->
+        <!-- Injected via JS -->
       </div>
     </section>
 
-    <!-- PAGE VIEW 3: HOTELS VIEW -->
+    <!-- VIEW 3: HOTELS VIEW -->
     <section id="viewHotels" class="hidden space-y-3">
       <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -226,7 +220,7 @@
       </div>
     </section>
 
-    <!-- PAGE VIEW 4: CHECKLIST VIEW -->
+    <!-- VIEW 4: CHECKLIST VIEW -->
     <section id="viewChecklist" class="hidden space-y-3">
       <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -236,13 +230,12 @@
         <p class="text-[10px] text-slate-400">重要證件、預約證明與行李確認項</p>
       </div>
       <div class="space-y-2" id="checklistContainer">
-        <!-- Dynamic Checklists Injected via JS -->
+        <!-- Injected via JS -->
       </div>
     </section>
 
   </main>
 
-  <!-- Bottom Navigation Bar -->
   <nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav px-6 py-2">
     <div class="max-w-md mx-auto flex items-center justify-around">
       <button onclick="switchView('timeline')" id="navTimeline" class="flex flex-col items-center space-y-1 text-sky-400">
@@ -267,7 +260,6 @@
     </div>
   </nav>
 
-  <!-- UNIFIED EDIT/ADD FLIGHT MODAL FORM -->
   <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative overflow-hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -335,7 +327,7 @@
   </div>
 
   <script>
-    /* Complete Itinerary Data (10/16 - 10/25) */
+    /* Complete 10-Day Itinerary Data Structure */
     const tripData = [
       {
         day: 1,
@@ -483,7 +475,6 @@
       { id: "c7", text: "信用卡 (外幣簽帳/Apple Pay 設定)", checked: true }
     ];
 
-    /* Dynamic Sector Color Themes */
     const sectorColorThemes = [
       { border: "border-sky-500/40", text: "text-sky-400", badgeBg: "bg-sky-500/20", btnBg: "bg-sky-500/10 hover:bg-sky-500/20", activeTab: "bg-sky-500 text-white" },
       { border: "border-emerald-500/40", text: "text-emerald-400", badgeBg: "bg-emerald-500/20", btnBg: "bg-emerald-500/10 hover:bg-emerald-500/20", activeTab: "bg-emerald-500 text-white" },
@@ -491,7 +482,7 @@
       { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
     ];
 
-    /* Helper function to calculate check-in time (2 hours before departure) */
+    /* Helper: Calculate -2h Standby Time */
     function calculateCheckinTime(depTimeStr) {
       if (!depTimeStr) return "";
       const parts = depTimeStr.split(":");
@@ -511,13 +502,10 @@
       const checkinInput = document.getElementById('formCheckinTime');
       if (depTime) {
         const calculated = calculateCheckinTime(depTime);
-        if (calculated) {
-          checkinInput.value = calculated;
-        }
+        if (calculated) checkinInput.value = calculated;
       }
     }
 
-    /* Airline Code Mapping */
     const airlineMapping = {
       "AA": "American Airlines",
       "UA": "United Airlines",
@@ -536,7 +524,6 @@
       nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
     }
 
-    /* Initial Standby Sectors & Flights Data Structure */
     let standbyData = JSON.parse(localStorage.getItem('us_trip_standby_data')) || [
       {
         id: "sec-1",
@@ -767,7 +754,6 @@
       saveStandbyData();
     }
 
-    /* Render Standby View */
     function renderStandbyView() {
       const container = document.getElementById('standbySectorsContainer');
       if (!container) return;
@@ -778,19 +764,16 @@
         const secCard = document.createElement('div');
         secCard.className = `glass-card rounded-2xl p-4 border ${theme.border} space-y-3 transition-all`;
 
-        // Extract distinct airline codes in this sector
         const availableAirlines = Array.from(
           new Set(sec.flights.map(f => (f.airlineCode || '').toUpperCase()).filter(Boolean))
         ).sort();
 
         let displayedFlights = [...sec.flights];
 
-        // Apply NYC Airport Filter
         if (sec.isNyc && sec.nycFilter && sec.nycFilter !== "ALL") {
           displayedFlights = displayedFlights.filter(f => f.apt === sec.nycFilter);
         }
 
-        // Apply Airline Filter
         if (sec.airlineFilter && sec.airlineFilter !== "ALL") {
           displayedFlights = displayedFlights.filter(f => (f.airlineCode || '').toUpperCase() === sec.airlineFilter);
         }
@@ -851,7 +834,7 @@
                   </div>
                 </div>
 
-                <!-- NYC Airport Filter (If Applicable) -->
+                <!-- NYC Airport Filter -->
                 ${sec.isNyc ? `
                   <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
                     <span class="text-[10px] font-bold text-amber-400 shrink-0 w-16">機場 篩選:</span>
@@ -1012,7 +995,7 @@
             <p class="text-[11px] text-slate-300 mt-0.5 leading-snug">${evt.desc}</p>
             ${evt.location ? `
               <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 mt-1.5 text-[10px] text-sky-400 hover:underline">
-                <i data-lucide="navigation" class="w-3 h-3"></i>
+                <i data-lucide="navigation" class="w-3-3"></i>
                 <span class="truncate">${evt.location}</span>
               </a>
             ` : ''}
@@ -1092,9 +1075,7 @@
 
       ['navTimeline', 'navStandby', 'navHotels', 'navChecklist'].forEach(id => {
         const btn = document.getElementById(id);
-        if (btn) {
-          btn.className = "flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200";
-        }
+        if (btn) btn.className = "flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-200";
       });
 
       if (view === 'standby') {
