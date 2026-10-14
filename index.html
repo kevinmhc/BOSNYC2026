@@ -61,7 +61,6 @@
       scrollbar-width: none;
     }
 
-    /* Dark Dynamic Glassmorphism */
     .glass-card {
       background: rgba(15, 23, 42, 0.78);
       backdrop-filter: blur(16px);
@@ -85,8 +84,7 @@
       color: #64748b;
     }
 
-    /* iOS Dark Mode Inputs fix */
-    input[type="time"], input[type="date"], input[type="text"], select {
+    input[type="time"], input[type="date"], input[type="text"], select, textarea {
       color-scheme: dark;
       font-size: 16px !important;
       box-sizing: border-box;
@@ -100,7 +98,7 @@
     }
 
     @media (min-width: 648px) {
-      input[type="time"], input[type="date"], input[type="text"], select {
+      input[type="time"], input[type="date"], input[type="text"], select, textarea {
         font-size: 14px !important;
       }
     }
@@ -115,12 +113,18 @@
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30">
             iPhone 14 Pro
           </span>
-          <span class="text-xs font-medium text-slate-300">10-Day Trip</span>
+          <span id="tripTotalDaysBadge" class="text-xs font-medium text-slate-300">10-Day Trip</span>
         </div>
-        <button id="todayBtn" onclick="jumpToToday()" class="px-3 py-1 bg-sky-600/20 hover:bg-sky-600/30 text-sky-400 border border-sky-500/30 rounded-full text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition">
-          <i data-lucide="compass" class="w-4 h-4"></i>
-          <span>今天行程</span>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="resetTripData()" title="重置全部行程" class="px-2.5 py-1 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 rounded-full text-xs font-semibold flex items-center gap-1 active:scale-95 transition">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>重置</span>
+          </button>
+          <button id="todayBtn" onclick="jumpToToday()" class="px-3 py-1 bg-sky-600/20 hover:bg-sky-600/30 text-sky-400 border border-sky-500/30 rounded-full text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            <span>今天</span>
+          </button>
+        </div>
       </div>
 
       <div class="flex items-baseline justify-between">
@@ -131,7 +135,7 @@
       </div>
 
       <!-- Days Scrollbar Header -->
-      <div class="mt-3 flex space-x-2 overflow-x-auto hide-scrollbar py-1" id="dayTabsList">
+      <div class="mt-3 flex space-x-2 overflow-x-auto hide-scrollbar py-1 items-center" id="dayTabsList">
         <!-- Dynamic Tabs -->
       </div>
     </div>
@@ -141,19 +145,21 @@
 
     <!-- VIEW 1: TIMELINE -->
     <section id="viewTimeline" class="space-y-4">
-      <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300">
+      <div id="daySummaryCard" class="glass-card rounded-2xl p-4 relative overflow-hidden transition-all duration-300 space-y-3">
         <div class="flex justify-between items-start gap-2">
           <div>
             <span id="dayBadge" class="text-xs font-bold uppercase tracking-wider text-sky-400"></span>
             <h2 id="dayTitle" class="text-lg font-bold text-white mt-0.5"></h2>
           </div>
-          <div id="dayLocationBadge" class="px-3 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-semibold flex items-center gap-1.5 shrink-0">
-            <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
-            <span id="dayLocationText">--</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <div id="dayLocationBadge" class="px-3 py-1 bg-slate-800/80 border border-slate-700/80 rounded-full text-xs text-sky-300 font-semibold flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-4 h-4 text-sky-400"></i>
+              <span id="dayLocationText">--</span>
+            </div>
           </div>
         </div>
 
-        <div id="hotelBar" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+        <div id="hotelBar" class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
           <div class="flex items-center space-x-2 text-slate-200 truncate pr-2">
             <i data-lucide="bed" class="w-4 h-4 text-amber-400 shrink-0"></i>
             <span id="hotelText" class="truncate font-semibold">--</span>
@@ -162,6 +168,18 @@
             <span>導航</span>
             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
           </a>
+        </div>
+
+        <!-- Day Management Actions Bar -->
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs">
+          <button onclick="openDayEditModal(currentDayIndex)" class="flex-1 py-1.5 bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 rounded-xl font-bold flex items-center justify-center gap-1 transition">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>編輯當天資料</span>
+          </button>
+          <button onclick="deleteCurrentDay()" class="px-3 py-1.5 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 rounded-xl font-bold flex items-center gap-1 transition" title="刪除這天行程">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>刪除天</span>
+          </button>
         </div>
       </div>
 
@@ -180,7 +198,10 @@
           <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
           <span>詳細行程 Timeline</span>
         </h3>
-        <span class="text-xs text-slate-400">點擊地址開啟 Google Maps</span>
+        <button onclick="openEventModal(currentDayIndex, null)" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-lg shadow-sky-500/20 active:scale-95 transition">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>新增活動</span>
+        </button>
       </div>
 
       <div id="timelineContainer" class="space-y-3">
@@ -266,6 +287,127 @@
     </div>
   </nav>
 
+  <!-- Day Edit Modal -->
+  <div id="dayEditModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+          <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
+          <span id="dayModalTitleText">編輯天資料</span>
+        </h3>
+        <button onclick="closeDayEditModal()" class="p-1.5 rounded-full text-slate-400 hover:text-white bg-slate-800 active:scale-95">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="dayEditForm" onsubmit="handleDayEditSubmit(event)" class="space-y-3">
+        <input type="hidden" id="editDayIndex">
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Day 編號</label>
+            <input type="number" id="formDayNo" required min="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">日期 (例: 10/16 (五))</label>
+            <input type="text" id="formDayDate" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">當天標題 / 主題</label>
+          <input type="text" id="formDayTitle" required placeholder="例: 香港 → Toronto 啟程" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">所在地 / City</label>
+          <input type="text" id="formDayLocation" required placeholder="例: Toronto, Canada" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-amber-400 uppercase mb-1">當晚酒店名稱</label>
+            <input type="text" id="formDayHotel" placeholder="酒店名稱" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-amber-400 uppercase mb-1">酒店地址 (導航用)</label>
+            <input type="text" id="formDayHotelAddr" placeholder="例: 801 Dixon Rd" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-1">
+          <input type="checkbox" id="formDayHighlight" class="w-4 h-4 accent-rose-500 rounded bg-slate-900 border-slate-700">
+          <label for="formDayHighlight" class="text-xs font-bold text-rose-300">設定為特別高亮日 (Anniversary / Highlight)</label>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeDayEditModal()" class="px-4 py-2 bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-700">取消</button>
+          <button type="submit" class="px-4 py-2 bg-sky-500 text-white rounded-xl text-xs font-bold hover:bg-sky-600 shadow-md shadow-sky-500/20">儲存變更</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Event Edit Modal -->
+  <div id="eventEditModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5" id="eventModalTitleText">
+          <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+          <span>新增 / 編輯活動</span>
+        </h3>
+        <button onclick="closeEventModal()" class="p-1.5 rounded-full text-slate-400 hover:text-white bg-slate-800 active:scale-95">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="eventEditForm" onsubmit="handleEventEditSubmit(event)" class="space-y-3">
+        <input type="hidden" id="eventDayIndex">
+        <input type="hidden" id="eventItemIndex">
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">時間 (Time)</label>
+            <input type="text" id="formEvtTime" required placeholder="例: 19:10 或 上午" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">標籤分類 Tag</label>
+            <select id="formEvtTag" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-sm text-white">
+              <option value="spot">景點 (Spot)</option>
+              <option value="food">美食 (Food)</option>
+              <option value="flight">航班 (Flight)</option>
+              <option value="hotel">酒店 (Hotel)</option>
+              <option value="shopping">購物 (Shopping)</option>
+              <option value="transport">交通 (Transport)</option>
+              <option value="heart">特別/紀念 (Heart)</option>
+              <option value="activity">活動 (Activity)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">活動名稱</label>
+          <input type="text" id="formEvtName" required placeholder="例: Tatte Bakery & Cafe" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase mb-1">詳細描述 Description</label>
+          <textarea id="formEvtDesc" rows="2" placeholder="活動細節..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-sky-400 uppercase mb-1">導航地點 / 地址 (Google Maps)</label>
+          <input type="text" id="formEvtLocation" placeholder="例: 428 Harrison Ave, Boston, MA" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeEventModal()" class="px-4 py-2 bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-700">取消</button>
+          <button type="submit" class="px-4 py-2 bg-sky-500 text-white rounded-xl text-xs font-bold hover:bg-sky-600 shadow-md shadow-sky-500/20">儲存活動</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Flight Form Modal -->
   <div id="flightFormModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="glass-card rounded-2xl w-full max-w-sm p-5 space-y-4 border border-slate-700 shadow-2xl relative overflow-hidden">
@@ -286,38 +428,38 @@
         <div class="grid grid-cols-3 gap-2">
           <div class="min-w-0">
             <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Airline Code</label>
-            <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 uppercase">
+            <input type="text" id="formAirlineCode" required placeholder="例: AA" oninput="autoLookupAirline()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white uppercase">
           </div>
           <div class="col-span-2 min-w-0">
             <label class="block text-xs font-bold text-slate-300 uppercase mb-1">航班號 Flight No.</label>
-            <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
+            <input type="text" id="formFlightNo" required placeholder="例: 2145" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
           </div>
         </div>
 
         <div class="min-w-0">
           <label class="block text-xs font-bold text-slate-300 uppercase mb-1">航空公司名稱 (自動對照)</label>
-          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none cursor-not-allowed">
+          <input type="text" id="formAirlineName" readonly placeholder="自動帶入 Airline Name" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 cursor-not-allowed">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div class="min-w-0 overflow-hidden">
             <label class="block text-xs font-bold text-sky-400 uppercase mb-1">起飛時間 (STD)</label>
-            <input type="time" id="formDepTime" onchange="handleDepTimeChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold focus:outline-none focus:border-sky-400">
+            <input type="time" id="formDepTime" onchange="handleDepTimeChange()" class="w-full bg-slate-900 border border-sky-500/40 rounded-xl px-3 py-2 text-sm text-sky-300 font-semibold">
           </div>
           <div class="min-w-0 overflow-hidden">
             <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Terminal</label>
-            <input type="text" id="formTerminal" placeholder="例: B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
+            <input type="text" id="formTerminal" placeholder="例: B" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
           </div>
         </div>
 
         <div class="min-w-0 overflow-hidden">
           <label class="block text-xs font-bold text-amber-400 uppercase mb-1">報到 / Standby 時間 (-2 hrs)</label>
-          <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
+          <input type="time" id="formCheckinTime" class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-3 py-2 text-sm text-amber-300 font-semibold">
         </div>
 
         <div id="nycAirportSelectGroup" class="min-w-0">
           <label class="block text-xs font-bold text-amber-400 uppercase mb-1">紐約機場選擇 (NYC Airport)</label>
-          <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300 focus:outline-none focus:border-amber-500">
+          <select id="formApt" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-amber-300">
             <option value="EWR">EWR (Newark)</option>
             <option value="LGA">LGA (LaGuardia)</option>
             <option value="JFK">JFK (Kennedy)</option>
@@ -334,8 +476,8 @@
   </div>
 
   <script>
-    /* Complete 10-Day Itinerary Data Structure */
-    const tripData = [
+    /* Default Itinerary Data Structure */
+    const defaultTripData = [
       {
         day: 1,
         date: "10/16 (五)",
@@ -472,6 +614,175 @@
       }
     ];
 
+    let tripData = JSON.parse(localStorage.getItem('us_trip_main_data')) || defaultTripData;
+
+    function saveTripData() {
+      localStorage.setItem('us_trip_main_data', JSON.stringify(tripData));
+      renderTabs();
+      renderDay(currentDayIndex);
+      renderHotelsModal();
+    }
+
+    function resetTripData() {
+      if (confirm("確定要重置所有行程為預設 10 天內容？")) {
+        tripData = JSON.parse(JSON.stringify(defaultTripData));
+        currentDayIndex = 0;
+        saveTripData();
+      }
+    }
+
+    /* DAY EDIT LOGIC */
+    function openDayEditModal(index) {
+      const modal = document.getElementById('dayEditModal');
+      const data = tripData[index];
+      if (!data) return;
+
+      document.getElementById('editDayIndex').value = index;
+      document.getElementById('formDayNo').value = data.day;
+      document.getElementById('formDayDate').value = data.date;
+      document.getElementById('formDayTitle').value = data.title;
+      document.getElementById('formDayLocation').value = data.location;
+      document.getElementById('formDayHotel').value = data.hotel || '';
+      document.getElementById('formDayHotelAddr').value = data.hotelAddr || '';
+      document.getElementById('formDayHighlight').checked = !!data.highlight;
+
+      document.getElementById('dayModalTitleText').innerText = `編輯 Day ${data.day} 資料`;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDayEditModal() {
+      const modal = document.getElementById('dayEditModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleDayEditSubmit(e) {
+      e.preventDefault();
+      const index = parseInt(document.getElementById('editDayIndex').value, 10);
+      if (isNaN(index) || !tripData[index]) return;
+
+      tripData[index].day = parseInt(document.getElementById('formDayNo').value, 10) || (index + 1);
+      tripData[index].date = document.getElementById('formDayDate').value.trim();
+      tripData[index].title = document.getElementById('formDayTitle').value.trim();
+      tripData[index].location = document.getElementById('formDayLocation').value.trim();
+      tripData[index].hotel = document.getElementById('formDayHotel').value.trim();
+      tripData[index].hotelAddr = document.getElementById('formDayHotelAddr').value.trim();
+      tripData[index].highlight = document.getElementById('formDayHighlight').checked;
+
+      saveTripData();
+      closeDayEditModal();
+    }
+
+    function addNewDay() {
+      const newDayNo = tripData.length + 1;
+      const newDay = {
+        day: newDayNo,
+        date: "10/" + (15 + newDayNo) + " (日)",
+        title: "新行程天 " + newDayNo,
+        location: "美國各地",
+        hotel: "待定酒店",
+        hotelAddr: "City, USA",
+        events: [
+          { time: "09:00", tag: "activity", name: "自由行程 / 探索", desc: "請輸入活動詳情", location: "City" }
+        ]
+      };
+      tripData.push(newDay);
+      currentDayIndex = tripData.length - 1;
+      saveTripData();
+    }
+
+    function deleteCurrentDay() {
+      if (tripData.length <= 1) {
+        alert("最少需要保留一天行程！");
+        return;
+      }
+      if (!confirm(`確定要刪除 Day ${tripData[currentDayIndex].day} 及其所有活動？`)) return;
+      
+      tripData.splice(currentDayIndex, 1);
+      if (currentDayIndex >= tripData.length) {
+        currentDayIndex = tripData.length - 1;
+      }
+      saveTripData();
+    }
+
+    /* EVENT EDIT LOGIC */
+    function openEventModal(dayIndex, itemIndex) {
+      const modal = document.getElementById('eventEditModal');
+      document.getElementById('eventDayIndex').value = dayIndex;
+      document.getElementById('eventItemIndex').value = itemIndex !== null ? itemIndex : '';
+
+      if (itemIndex !== null) {
+        document.getElementById('eventModalTitleText').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-sky-400"></i><span>編輯活動</span>';
+        const evt = tripData[dayIndex].events[itemIndex];
+        document.getElementById('formEvtTime').value = evt.time || '';
+        document.getElementById('formEvtTag').value = evt.tag || 'spot';
+        document.getElementById('formEvtName').value = evt.name || '';
+        document.getElementById('formEvtDesc').value = evt.desc || '';
+        document.getElementById('formEvtLocation').value = evt.location || '';
+      } else {
+        document.getElementById('eventModalTitleText').innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-sky-400"></i><span>新增活動</span>';
+        document.getElementById('eventEditForm').reset();
+        document.getElementById('formEvtTime').value = "12:00";
+        document.getElementById('formEvtTag').value = "spot";
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeEventModal() {
+      const modal = document.getElementById('eventEditModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleEventEditSubmit(e) {
+      e.preventDefault();
+      const dayIndex = parseInt(document.getElementById('eventDayIndex').value, 10);
+      const itemIndexStr = document.getElementById('eventItemIndex').value;
+
+      if (isNaN(dayIndex) || !tripData[dayIndex]) return;
+
+      const newEvt = {
+        time: document.getElementById('formEvtTime').value.trim(),
+        tag: document.getElementById('formEvtTag').value,
+        name: document.getElementById('formEvtName').value.trim(),
+        desc: document.getElementById('formEvtDesc').value.trim(),
+        location: document.getElementById('formEvtLocation').value.trim()
+      };
+
+      if (itemIndexStr !== '') {
+        const itemIndex = parseInt(itemIndexStr, 10);
+        tripData[dayIndex].events[itemIndex] = newEvt;
+      } else {
+        if (!tripData[dayIndex].events) tripData[dayIndex].events = [];
+        tripData[dayIndex].events.push(newEvt);
+      }
+
+      saveTripData();
+      closeEventModal();
+    }
+
+    function deleteEvent(dayIndex, itemIndex) {
+      if (!confirm("確定要刪除這個活動？")) return;
+      tripData[dayIndex].events.splice(itemIndex, 1);
+      saveTripData();
+    }
+
+    function moveEvent(dayIndex, itemIndex, direction) {
+      const events = tripData[dayIndex].events;
+      const targetIndex = itemIndex + direction;
+      if (targetIndex < 0 || targetIndex >= events.length) return;
+
+      const temp = events[itemIndex];
+      events[itemIndex] = events[targetIndex];
+      events[targetIndex] = temp;
+      saveTripData();
+    }
+
     const checklistData = [
       { id: "c1", text: "Passport & 美國/加拿大簽證 (ESTA / eTA)", checked: true },
       { id: "c2", text: "機票及酒店 Confirmation 印本/電子檔", checked: true },
@@ -489,7 +800,6 @@
       { border: "border-amber-500/40", text: "text-amber-400", badgeBg: "bg-amber-500/20", btnBg: "bg-amber-500/10 hover:bg-amber-500/20", activeTab: "bg-amber-500 text-white" }
     ];
 
-    /* Helper: Calculate -2h Standby Time */
     function calculateCheckinTime(depTimeStr) {
       if (!depTimeStr) return "";
       const parts = depTimeStr.split(":");
@@ -533,7 +843,6 @@
       nameInput.value = airlineMapping[code] || (code ? "其他航空公司" : "");
     }
 
-    /* FULL USER SUPPLIED FLIGHT LIST WITH TERMINAL FILTERS */
     const defaultStandbyData = [
       {
         id: "sec-bos-nyc",
@@ -942,10 +1251,7 @@
 
           ${isExpanded ? `
             <div class="mt-3 pt-3 border-t border-slate-800/80 space-y-2.5">
-              
-              <!-- Filter Controls Container -->
               <div class="space-y-2 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
-                <!-- Airline Code Filter -->
                 <div class="flex items-center gap-1.5">
                   <span class="text-xs font-bold text-sky-400 shrink-0 w-20">航空公司:</span>
                   <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
@@ -970,7 +1276,6 @@
                   </div>
                 </div>
 
-                <!-- Terminal Filter -->
                 <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
                   <span class="text-xs font-bold text-emerald-400 shrink-0 w-20">航廈 Terminal:</span>
                   <div class="flex gap-1 overflow-x-auto hide-scrollbar py-0.5">
@@ -995,7 +1300,6 @@
                   </div>
                 </div>
 
-                <!-- NYC Airport Filter -->
                 ${sec.isNyc ? `
                   <div class="flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
                     <span class="text-xs font-bold text-amber-400 shrink-0 w-20">紐約機場:</span>
@@ -1015,7 +1319,6 @@
                 ` : ''}
               </div>
 
-              <!-- Flight List -->
               <div class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                 ${displayedFlights.length === 0 ? `
                   <div class="p-4 text-center text-xs text-slate-400 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
@@ -1075,7 +1378,7 @@
     document.addEventListener("DOMContentLoaded", function() {
       lucide.createIcons();
       renderTabs();
-      renderDay(0);
+      renderDay(currentDayIndex);
       renderChecklist();
       renderHotelsModal();
       renderStandbyView();
@@ -1086,6 +1389,8 @@
       if (!container) return;
       container.innerHTML = "";
       
+      document.getElementById("tripTotalDaysBadge").innerText = `${tripData.length}-Day Trip`;
+
       tripData.forEach((data, idx) => {
         const btn = document.createElement("button");
         btn.className = `px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex flex-col items-center ${
@@ -1100,9 +1405,18 @@
         `;
         container.appendChild(btn);
       });
+
+      // Add Day button at the end of tabs
+      const addBtn = document.createElement("button");
+      addBtn.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 shrink-0 transition";
+      addBtn.onclick = addNewDay;
+      addBtn.innerHTML = '<i data-lucide="plus" class="w-4 h-4"></i><span>新增天</span>';
+      container.appendChild(addBtn);
+      lucide.createIcons();
     }
 
     function selectDay(index) {
+      if (index < 0 || index >= tripData.length) return;
       currentDayIndex = index;
       renderTabs();
       renderDay(index);
@@ -1112,12 +1426,19 @@
       const data = tripData[index];
       if (!data) return;
       
-      document.getElementById("tripProgressText").innerText = `Day ${data.day} / 10`;
+      document.getElementById("tripProgressText").innerText = `Day ${data.day} / ${tripData.length}`;
       document.getElementById("dayBadge").innerText = `DAY ${data.day} • ${data.date}`;
       document.getElementById("dayTitle").innerText = data.title;
       document.getElementById("dayLocationText").innerText = data.location;
-      document.getElementById("hotelText").innerText = data.hotel;
-      document.getElementById("hotelMapBtn").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.hotelAddr)}`;
+      document.getElementById("hotelText").innerText = data.hotel || '未設定酒店';
+      
+      const hotelMapBtn = document.getElementById("hotelMapBtn");
+      if (data.hotelAddr) {
+        hotelMapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.hotelAddr)}`;
+        hotelMapBtn.classList.remove('hidden');
+      } else {
+        hotelMapBtn.classList.add('hidden');
+      }
 
       const banner = document.getElementById("highlightBanner");
       if (data.highlight) {
@@ -1129,9 +1450,19 @@
       const timeline = document.getElementById("timelineContainer");
       timeline.innerHTML = "";
 
-      data.events.forEach(evt => {
+      if (!data.events || data.events.length === 0) {
+        timeline.innerHTML = `
+          <div class="glass-card rounded-xl p-6 text-center text-xs text-slate-400 space-y-2">
+            <p>這天還沒有新增任何活動</p>
+            <button onclick="openEventModal(${index}, null)" class="px-3 py-1.5 bg-sky-500 text-white rounded-xl font-bold">立即新增活動</button>
+          </div>
+        `;
+        return;
+      }
+
+      data.events.forEach((evt, evtIdx) => {
         const item = document.createElement("div");
-        item.className = "glass-card rounded-xl p-3.5 flex items-start space-x-3.5 hover:border-slate-700 transition";
+        item.className = "glass-card rounded-xl p-3.5 flex flex-col space-y-2 hover:border-slate-700 transition";
         
         let iconName = "map-pin";
         let iconBg = "bg-sky-500/15 text-sky-400 border-sky-500/30";
@@ -1145,21 +1476,33 @@
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || evt.name)}`;
 
         item.innerHTML = `
-          <div class="flex flex-col items-center shrink-0 pt-0.5">
-            <span class="text-xs font-bold text-sky-400 mb-1">${evt.time}</span>
-            <div class="w-9 h-9 rounded-xl border ${iconBg} flex items-center justify-center">
-              <i data-lucide="${iconName}" class="w-4.5 h-4.5"></i>
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-start space-x-3">
+              <div class="flex flex-col items-center shrink-0 pt-0.5">
+                <span class="text-xs font-bold text-sky-400 mb-1">${evt.time}</span>
+                <div class="w-9 h-9 rounded-xl border ${iconBg} flex items-center justify-center">
+                  <i data-lucide="${iconName}" class="w-4.5 h-4.5"></i>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-white">${evt.name}</h4>
+                <p class="text-xs text-slate-300 mt-1 leading-relaxed">${evt.desc || ''}</p>
+                ${evt.location ? `
+                  <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1.5 mt-2 text-xs text-sky-400 font-semibold hover:underline">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
+                    <span class="truncate">${evt.location}</span>
+                  </a>
+                ` : ''}
+              </div>
             </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-white">${evt.name}</h4>
-            <p class="text-xs text-slate-300 mt-1 leading-relaxed">${evt.desc}</p>
-            ${evt.location ? `
-              <a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1.5 mt-2 text-xs text-sky-400 font-semibold hover:underline">
-                <i data-lucide="navigation" class="w-3.5 h-3.5"></i>
-                <span class="truncate">${evt.location}</span>
-              </a>
-            ` : ''}
+
+            <!-- Event Action Buttons -->
+            <div class="flex items-center gap-1 shrink-0 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
+              ${evtIdx > 0 ? `<button onclick="moveEvent(${index}, ${evtIdx}, -1)" title="向上移動" class="p-1 text-slate-400 hover:text-white"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>` : ''}
+              ${evtIdx < data.events.length - 1 ? `<button onclick="moveEvent(${index}, ${evtIdx}, 1)" title="向下移動" class="p-1 text-slate-400 hover:text-white"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>` : ''}
+              <button onclick="openEventModal(${index}, ${evtIdx})" title="編輯活動" class="p-1 text-slate-300 hover:text-sky-300"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteEvent(${index}, ${evtIdx})" title="刪除活動" class="p-1 text-rose-400 hover:text-rose-300"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
           </div>
         `;
         timeline.appendChild(item);
@@ -1199,26 +1542,21 @@
       if (!container) return;
       container.innerHTML = "";
       
-      const hotels = [
-        { name: "Sheraton Toronto Airport Hotel", days: "10/16", addr: "801 Dixon Rd, Toronto, ON" },
-        { name: "Sheraton Boston Hotel", days: "10/17 - 10/18", addr: "39 Dalton St, Boston, MA 02199" },
-        { name: "Aloft Secaucus Meadowlands", days: "10/19 - 10/21", addr: "460 Harmon Meadow Blvd, Secaucus, NJ 07094" },
-        { name: "Westin Jersey City Newport / Envue", days: "10/22 - 10/23", addr: "479 Washington Blvd, Jersey City, NJ 07310" },
-        { name: "Boston Airport Hotel", days: "10/24", addr: "Boston Logan International Airport" }
-      ];
-
-      hotels.forEach(h => {
+      tripData.forEach(d => {
+        if (!d.hotel) return;
         const div = document.createElement("div");
         div.className = "glass-card p-4 rounded-xl space-y-1.5";
         div.innerHTML = `
           <div class="flex justify-between items-start gap-2">
-            <h4 class="text-xs font-bold text-white">${h.name}</h4>
-            <span class="text-xs font-semibold text-amber-400 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30 shrink-0">${h.days}</span>
+            <h4 class="text-xs font-bold text-white">Day ${d.day}: ${d.hotel}</h4>
+            <span class="text-xs font-semibold text-amber-400 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30 shrink-0">${d.date}</span>
           </div>
-          <p class="text-xs text-slate-300">${h.addr}</p>
-          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.addr)}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-sky-400 font-semibold mt-1">
-            <i data-lucide="map" class="w-3.5 h-3.5"></i> 地圖導航
-          </a>
+          <p class="text-xs text-slate-300">${d.hotelAddr || '無詳細地址'}</p>
+          ${d.hotelAddr ? `
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.hotelAddr)}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-sky-400 font-semibold mt-1">
+              <i data-lucide="map" class="w-3.5 h-3.5"></i> 地圖導航
+            </a>
+          ` : ''}
         `;
         container.appendChild(div);
       });
@@ -1252,10 +1590,10 @@
         document.getElementById('headerPageTitle').innerHTML = '<span>酒店住宿 Hotels</span>';
         dayTabs.classList.add('hidden');
         progressText.classList.add('hidden');
+        renderHotelsModal();
       } else if (view === 'checklist') {
         document.getElementById('viewChecklist').classList.remove('hidden');
         document.getElementById('navChecklist').className = "flex flex-col items-center space-y-1 text-sky-400";
-        document.getElementById('headerPageTitle', '出發備忘 Checklist');
         document.getElementById('headerPageTitle').innerHTML = '<span>出發備忘 Checklist</span>';
         dayTabs.classList.add('hidden');
         progressText.classList.add('hidden');
@@ -1263,7 +1601,6 @@
         document.getElementById('viewTimeline').classList.remove('hidden');
         document.getElementById('navTimeline').className = "flex flex-col items-center space-y-1 text-sky-400";
         document.getElementById('headerPageTitle').innerHTML = '<span>🇺🇸 美國之旅 2026</span>';
-        dayTabs.classList.add('hidden');
         dayTabs.classList.remove('hidden');
         progressText.classList.remove('hidden');
       }
